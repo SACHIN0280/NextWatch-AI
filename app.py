@@ -2,36 +2,46 @@ import streamlit as st
 import pickle
 import pandas as pd
 import requests
-import base64
+import os
+import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 
 # -------------------- CONFIG --------------------
 API_KEY = "21dc30dc0e6b7c30e8abc1fd5aaca6e8"
 
-# -------------------- LOAD FILES --------------------
-movies_dict = pickle.load(open('movies_dict.pkl', 'rb'))
+# Put your direct download links here (e.g., Dropbox links ending in ?dl=1)
+MOVIES_URL = "https://www.dropbox.com/scl/fi/voxy7ruwtunr02k9xs4rx/movies.pkl?rlkey=oa6ckbwieqt4k6ksv8hz00720&st=qcu9h1a5&dl=1"
+SIMILARITY_URL = "https://www.dropbox.com/scl/fi/f08d8z5onggk2rgnty2oj/similarity_compressed.pkl?rlkey=hh413cudopudfgtgf746waxzr&st=4fpqaw9j&dl=1"
+
+# -------------------- LOAD FILES (CACHED) --------------------
+@st.cache_resource
+def load_data():
+    # Download files if they aren't on the server yet
+    if not os.path.exists('movies_dict.pkl'):
+        urllib.request.urlretrieve(MOVIES_URL, 'movies_dict.pkl')
+    if not os.path.exists('similarity_compressed.pkl'):
+        urllib.request.urlretrieve(SIMILARITY_URL, 'similarity_compressed.pkl')
+    
+    m_dict = pickle.load(open('movies_dict.pkl', 'rb'))
+    sim = pickle.load(open('similarity_compressed.pkl', 'rb'))
+    return m_dict, sim
+
+movies_dict, similarity = load_data()
 movies = pd.DataFrame(movies_dict)
-similarity = pickle.load(open('similarity_compressed.pkl', 'rb'))
 
 # -------------------- BACKGROUND --------------------
-def set_background(image_file):
-    with open(image_file, "rb") as f:
-        data = base64.b64encode(f.read()).decode()
-    css = f"""
+def set_styling():
+    css = """
     <style>
-    .stApp {{
-        background-image: url("data:image/jpg;base64,{data}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }}
-    .block-container {{
+    .stApp {
+        background-color: #1E90FF !important;
+    }
+    .block-container {
         background-color: transparent !important;
         padding-top: 8rem !important;
-    }}
+    }
     /* Netflix-style title */
-    h1 {{
+    h1 {
         color: #E50914 !important;
         text-align: center !important;
         font-size: 4rem !important;
@@ -40,34 +50,34 @@ def set_background(image_file):
         text-shadow: 2px 2px 0px #000, 4px 4px 0px rgba(0,0,0,0.3) !important;
         letter-spacing: 2px !important;
         margin-bottom: 0.5rem !important;
-    }}
+    }
     /* Subtitle */
-    p {{
+    p {
         text-align: center !important;
         color: white !important;
         text-shadow: 1px 1px 3px black !important;
-    }}
+    }
     /* Center and style selectbox */
-    div[data-testid="stSelectbox"] {{
+    div[data-testid="stSelectbox"] {
         width: 100% !important;
         margin: 0 auto !important;
-    }}
-    div[data-testid="stSelectbox"] label {{
+    }
+    div[data-testid="stSelectbox"] label {
         display: none !important;
-    }}
-    div[data-testid="stSelectbox"] > div {{
+    }
+    div[data-testid="stSelectbox"] > div {
         background-color: rgba(0,0,0,0.7) !important;
         border: 1px solid #E50914 !important;
         border-radius: 5px !important;
         color: white !important;
-    }}
+    }
     /* Center search button */
-    div[data-testid="stButton"] {{
+    div[data-testid="stButton"] {
         display: flex !important;
         justify-content: center !important;
         width: 100% !important;
-    }}
-    div[data-testid="stButton"] button {{
+    }
+    div[data-testid="stButton"] button {
         background-color: #E50914 !important;
         color: white !important;
         border: none !important;
@@ -76,26 +86,28 @@ def set_background(image_file):
         font-size: 1.1rem !important;
         font-weight: bold !important;
         width: 100% !important;
-    }}
-    div[data-testid="stButton"] button:hover {{
+    }
+    div[data-testid="stButton"] button:hover {
         background-color: #b20710 !important;
-    }}
+    }
     /* White text everywhere */
-    div, span, label {{
+    div, span, label {
         color: white !important;
-    }}
+    }
     /* Results dark background */
-    div[data-testid="stColumns"] {{
+    div[data-testid="stColumns"] {
         background-color: rgba(0, 0, 0, 0.75);
         border-radius: 10px;
         padding: 1rem;
         margin-top: 2rem;
-    }}
+    }
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
 
-# -------------------- FETCH MOVIE DETAILS --------------------
+# -------------------- API FETCH FUNCTIONS --------------------
+# (Keep your existing fetch_movie_details, fetch_trailer, and fetch_all exactly the same)
+
 def fetch_movie_details(movie_id):
     try:
         url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key={API_KEY}&language=en-US"
@@ -107,7 +119,6 @@ def fetch_movie_details(movie_id):
     except Exception:
         return None, 'N/A'
 
-# -------------------- FETCH TRAILER --------------------
 def fetch_trailer(movie_id):
     try:
         url = f"https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key={API_KEY}&language=en-US"
@@ -120,7 +131,6 @@ def fetch_trailer(movie_id):
     except Exception:
         return None
 
-# -------------------- FETCH ALL --------------------
 def fetch_all(movie_id):
     poster, rating = fetch_movie_details(movie_id)
     trailer = fetch_trailer(movie_id)
@@ -149,23 +159,19 @@ def recommend(movie):
     return movie_names, posters, ratings, trailers
 
 # -------------------- UI --------------------
-# -------------------- UI --------------------
-set_background("Image.jpg")
+set_styling()
 
 st.markdown("<h1>NEXTWATCH.AI</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center; font-size:1.1rem; color:#cccccc; text-shadow: 1px 1px 3px black;'>Find movies you'll love</p>", unsafe_allow_html=True)
 
-# Force button to align with selectbox using custom HTML layout
 col_left, col_center, col_right = st.columns([1, 2, 1])
 with col_center:
     st.markdown("""
     <style>
-    /* Make selectbox and button sit on same row */
     [data-testid="stHorizontalBlock"] {
         align-items: center !important;
         gap: 8px !important;
     }
-    /* Fix button height and prevent text wrap */
     [data-testid="stButton"] button {
         height: 45px !important;
         white-space: nowrap !important;
