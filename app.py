@@ -166,12 +166,7 @@ if trending:
             if movie["poster"]:
                 st.image(movie["poster"], use_container_width=True)
             else:
-                st.markdown("""
-                <div style='background:#2a2a2a; height:300px; border-radius:8px;
-                display:flex; align-items:center; justify-content:center; color:#555'>
-                    🎬 No Poster
-                </div>
-                """, unsafe_allow_html=True)
+                sst.markdown("<div style='background:#2a2a2a; height:300px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#555'>No Poster</div>", unsafe_allow_html=True)
 
             try:
                 r = float(movie["rating"])
@@ -196,12 +191,7 @@ if trending:
             if movie["poster"]:
                 st.image(movie["poster"], use_container_width=True)
             else:
-                st.markdown("""
-                <div style='background:#2a2a2a; height:300px; border-radius:8px;
-                display:flex; align-items:center; justify-content:center; color:#555'>
-                    🎬 No Poster
-                </div>
-                """, unsafe_allow_html=True)
+                st.markdown("<div style='background:#2a2a2a; height:300px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#555'>No Poster</div>", unsafe_allow_html=True)
 
             try:
                 r = float(movie["rating"])
