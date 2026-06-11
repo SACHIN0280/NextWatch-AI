@@ -61,6 +61,25 @@ def fetch_all(movie_id):
     trailer = fetch_trailer(movie_id)
     return poster, rating, overview, genres, trailer
 
+# -------------------- FETCH TRENDING --------------------
+def fetch_trending():
+    try:
+        url = f"https://api.themoviedb.org/3/trending/movie/week?api_key={API_KEY}"
+        data = requests.get(url, timeout=10).json()
+        results = data.get('results', [])[:10]
+        movies_list = []
+        for movie in results:
+            poster_path = movie.get('poster_path', '')
+            movies_list.append({
+                "title": movie.get('title', 'Unknown'),
+                "poster": f"https://image.tmdb.org/t/p/w500/{poster_path}" if poster_path else None,
+                "rating": movie.get('vote_average', 'N/A'),
+                "overview": movie.get('overview', 'No description available.'),
+                "id": movie.get('id')
+            })
+        return movies_list
+    except Exception:
+        return []
 # -------------------- RECOMMEND --------------------
 def recommend(movie):
     movie_index = movies[movies['title'] == movie].index[0]
@@ -125,7 +144,82 @@ st.markdown("""
     text-transform: uppercase;
     margin-bottom: 2.5rem;
 }
+# -------------------- TRENDING --------------------
+trending = fetch_trending()
+if trending:
+    st.markdown("""
+    <div style='padding: 2rem 4rem 1rem 4rem;'>
+        <div style='color:white; font-size:1.3rem; font-weight:700; margin-bottom:0.3rem'>
+            🔥 Trending This Week
+        </div>
+        <div style='color:#666; font-size:0.85rem; margin-bottom:1.5rem'>
+            Most popular movies right now
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
+    st.markdown('<div style="padding: 0 4rem;">', unsafe_allow_html=True)
+    cols = st.columns(5)
+    for idx, col in enumerate(cols[:5]):
+        movie = trending[idx]
+        with col:
+            if movie["poster"]:
+                st.image(movie["poster"], use_container_width=True)
+            else:
+                st.markdown("""
+                <div style='background:#2a2a2a; height:300px; border-radius:8px;
+                display:flex; align-items:center; justify-content:center; color:#555'>
+                    🎬 No Poster
+                </div>
+                """, unsafe_allow_html=True)
+
+            try:
+                r = float(movie["rating"])
+                rating_display = f"⭐ {r:.1f}/10"
+            except:
+                rating_display = "N/A"
+
+            st.markdown(f"""
+            <div class="movie-info">
+                <div class="movie-title">{movie['title']}</div>
+                <div class="movie-rating">{rating_display}</div>
+                <div class="movie-overview">{movie['overview']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    # Show next 5 trending
+    st.markdown('<div style="height:1.5rem"></div>', unsafe_allow_html=True)
+    cols2 = st.columns(5)
+    for idx, col in enumerate(cols2):
+        movie = trending[idx + 5]
+        with col:
+            if movie["poster"]:
+                st.image(movie["poster"], use_container_width=True)
+            else:
+                st.markdown("""
+                <div style='background:#2a2a2a; height:300px; border-radius:8px;
+                display:flex; align-items:center; justify-content:center; color:#555'>
+                    🎬 No Poster
+                </div>
+                """, unsafe_allow_html=True)
+
+            try:
+                r = float(movie["rating"])
+                rating_display = f"⭐ {r:.1f}/10"
+            except:
+                rating_display = "N/A"
+
+            st.markdown(f"""
+            <div class="movie-info">
+                <div class="movie-title">{movie['title']}</div>
+                <div class="movie-rating">{rating_display}</div>
+                <div class="movie-overview">{movie['overview']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('<div style="border-top:1px solid #1a1a1a; margin: 1rem 4rem;"></div>', unsafe_allow_html=True)
 /* Search bar */
 div[data-testid="stSelectbox"] > div {
     background-color: #1a1a1a !important;
