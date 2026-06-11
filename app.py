@@ -14,21 +14,21 @@ MOVIES_URL = "https://www.dropbox.com/scl/fi/voxy7ruwtunr02k9xs4rx/movies.pkl?rl
 SIMILARITY_URL = "https://www.dropbox.com/scl/fi/f08d8z5onggk2rgnty2oj/similarity_compressed.pkl?rlkey=hh413cudopudfgtgf746waxzr&st=4fpqaw9j&dl=1"
 
 # -------------------- LOAD FILES (CACHED) --------------------
+# -------------------- LOAD FILES (CACHED) --------------------
 @st.cache_resource
 def load_data():
-    # Download files if they aren't on the server yet
-    if not os.path.exists('movies_dict.pkl'):
-        urllib.request.urlretrieve(MOVIES_URL, 'movies_dict.pkl')
-    if not os.path.exists('similarity_compressed.pkl'):
-        urllib.request.urlretrieve(SIMILARITY_URL, 'similarity_compressed.pkl')
+    # We save them as "_dl.pkl" (downloaded) to bypass any cache issues
+    if not os.path.exists('movies_dict_dl.pkl'):
+        urllib.request.urlretrieve(MOVIES_URL, 'movies_dict_dl.pkl')
+    if not os.path.exists('similarity_compressed_dl.pkl'):
+        urllib.request.urlretrieve(SIMILARITY_URL, 'similarity_compressed_dl.pkl')
     
-    m_dict = pickle.load(open('movies_dict.pkl', 'rb'))
-    sim = pickle.load(open('similarity_compressed.pkl', 'rb'))
+    m_dict = pickle.load(open('movies_dict_dl.pkl', 'rb'))
+    sim = pickle.load(open('similarity_compressed_dl.pkl', 'rb'))
     return m_dict, sim
 
 movies_dict, similarity = load_data()
 movies = pd.DataFrame(movies_dict)
-
 # -------------------- BACKGROUND --------------------
 def set_styling():
     css = """
