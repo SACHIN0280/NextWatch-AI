@@ -9,27 +9,23 @@ from concurrent.futures import ThreadPoolExecutor
 # -------------------- CONFIG --------------------
 API_KEY = "21dc30dc0e6b7c30e8abc1fd5aaca6e8"
 
-# Put your direct download links here (e.g., Dropbox links ending in ?dl=1)
 MOVIES_URL = "https://www.dropbox.com/scl/fi/voxy7ruwtunr02k9xs4rx/movies.pkl?rlkey=oa6ckbwieqt4k6ksv8hz00720&st=qcu9h1a5&dl=1"
 SIMILARITY_URL = "https://www.dropbox.com/scl/fi/f08d8z5onggk2rgnty2oj/similarity_compressed.pkl?rlkey=hh413cudopudfgtgf746waxzr&st=4fpqaw9j&dl=1"
 
-# -------------------- LOAD FILES (CACHED) --------------------
-# -------------------- LOAD FILES (CACHED) --------------------
+# -------------------- LOAD FILES --------------------
 @st.cache_resource
 def load_data():
-    # We save them as "_dl.pkl" (downloaded) to bypass any cache issues
     if not os.path.exists('movies_dict_dl.pkl'):
         urllib.request.urlretrieve(MOVIES_URL, 'movies_dict_dl.pkl')
     if not os.path.exists('similarity_compressed_dl.pkl'):
         urllib.request.urlretrieve(SIMILARITY_URL, 'similarity_compressed_dl.pkl')
-    
     m_dict = pickle.load(open('movies_dict_dl.pkl', 'rb'))
     sim = pickle.load(open('similarity_compressed_dl.pkl', 'rb'))
     return m_dict, sim
 
 movies_dict, similarity = load_data()
 movies = pd.DataFrame(movies_dict)
-# -------------------- BACKGROUND --------------------
+
 # -------------------- FETCH FUNCTIONS --------------------
 def fetch_movie_details(movie_id):
     try:
@@ -61,7 +57,6 @@ def fetch_all(movie_id):
     trailer = fetch_trailer(movie_id)
     return poster, rating, overview, genres, trailer
 
-# -------------------- FETCH TRENDING --------------------
 def fetch_trending():
     try:
         url = f"https://api.themoviedb.org/3/trending/movie/week?api_key={API_KEY}"
@@ -80,6 +75,7 @@ def fetch_trending():
         return movies_list
     except Exception:
         return []
+
 # -------------------- RECOMMEND --------------------
 def recommend(movie):
     movie_index = movies[movies['title'] == movie].index[0]
@@ -111,18 +107,9 @@ st.set_page_config(page_title="NextWatch.AI", page_icon="🎬", layout="wide")
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-
 * { font-family: 'Inter', sans-serif !important; }
-
-.stApp {
-    background: #0f0f0f !important;
-}
-.block-container {
-    padding: 0 !important;
-    max-width: 100% !important;
-}
-
-/* Hero */
+.stApp { background: #0f0f0f !important; }
+.block-container { padding: 0 !important; max-width: 100% !important; }
 .hero {
     background: linear-gradient(180deg, #1a0000 0%, #0f0f0f 100%);
     padding: 5rem 4rem 3rem 4rem;
@@ -144,73 +131,6 @@ st.markdown("""
     text-transform: uppercase;
     margin-bottom: 2.5rem;
 }
-# -------------------- TRENDING --------------------
-trending = fetch_trending()
-if trending:
-    st.markdown("""
-    <div style='padding: 2rem 4rem 1rem 4rem;'>
-        <div style='color:white; font-size:1.3rem; font-weight:700; margin-bottom:0.3rem'>
-             Trending This Week
-        </div>
-        <div style='color:#666; font-size:0.85rem; margin-bottom:1.5rem'>
-            Most popular movies right now
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown('<div style="padding: 0 4rem;">', unsafe_allow_html=True)
-    cols = st.columns(5)
-    for idx, col in enumerate(cols[:5]):
-        movie = trending[idx]
-        with col:
-            if movie["poster"]:
-                st.image(movie["poster"], use_container_width=True)
-            else:
-                sst.markdown("<div style='background:#2a2a2a; height:300px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#555'>No Poster</div>", unsafe_allow_html=True)
-
-            try:
-                r = float(movie["rating"])
-                rating_display = f"⭐ {r:.1f}/10"
-            except:
-                rating_display = "N/A"
-
-            st.markdown(f"""
-            <div class="movie-info">
-                <div class="movie-title">{movie['title']}</div>
-                <div class="movie-rating">{rating_display}</div>
-                <div class="movie-overview">{movie['overview']}</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-    # Show next 5 trending
-    st.markdown('<div style="height:1.5rem"></div>', unsafe_allow_html=True)
-    cols2 = st.columns(5)
-    for idx, col in enumerate(cols2):
-        movie = trending[idx + 5]
-        with col:
-            if movie["poster"]:
-                st.image(movie["poster"], use_container_width=True)
-            else:
-                st.markdown("<div style='background:#2a2a2a; height:300px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#555'>No Poster</div>", unsafe_allow_html=True)
-
-            try:
-                r = float(movie["rating"])
-                rating_display = f"⭐ {r:.1f}/10"
-            except:
-                rating_display = "N/A"
-
-            st.markdown(f"""
-            <div class="movie-info">
-                <div class="movie-title">{movie['title']}</div>
-                <div class="movie-rating">{rating_display}</div>
-                <div class="movie-overview">{movie['overview']}</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown('<div style="border-top:1px solid #1a1a1a; margin: 1rem 4rem;"></div>', unsafe_allow_html=True)
-/* Search bar */
 div[data-testid="stSelectbox"] > div {
     background-color: #1a1a1a !important;
     border: 1px solid #333 !important;
@@ -218,8 +138,6 @@ div[data-testid="stSelectbox"] > div {
     color: white !important;
 }
 div[data-testid="stSelectbox"] label { display: none !important; }
-
-/* Search button */
 div[data-testid="stButton"] button {
     background: #E50914 !important;
     color: white !important;
@@ -230,26 +148,9 @@ div[data-testid="stButton"] button {
     height: 45px !important;
     white-space: nowrap !important;
     width: 100% !important;
-    transition: background 0.2s !important;
 }
-div[data-testid="stButton"] button:hover {
-    background: #ff1a27 !important;
-}
-
-/* Movie card */
-.movie-card {
-    background: #1a1a1a;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform 0.2s;
-    height: 100%;
-    border: 1px solid #2a2a2a;
-}
-.movie-card:hover { transform: translateY(-4px); }
-
-.movie-info {
-    padding: 1rem;
-}
+div[data-testid="stButton"] button:hover { background: #ff1a27 !important; }
+.movie-info { padding: 1rem; }
 .movie-title {
     color: white;
     font-weight: 700;
@@ -293,8 +194,6 @@ div[data-testid="stButton"] button:hover {
     font-weight: 600;
     text-decoration: none !important;
 }
-
-/* Results header */
 .results-header {
     color: white;
     font-size: 1.3rem;
@@ -307,11 +206,7 @@ div[data-testid="stButton"] button:hover {
     font-size: 0.85rem;
     padding: 0 4rem 1.5rem 4rem;
 }
-
-/* Spinner */
 div[data-testid="stSpinner"] { color: white !important; }
-
-/* Override streamlit white backgrounds */
 div, span, p, label { color: inherit; }
 </style>
 """, unsafe_allow_html=True)
@@ -333,8 +228,63 @@ with col_center:
         selected_movie = st.selectbox("", movies['title'].values)
     with btn_col:
         st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
-        search_clicked = st.button("🔍 Search")
+        search_clicked = st.button("Search")
 st.markdown('</div>', unsafe_allow_html=True)
+
+# -------------------- TRENDING --------------------
+trending = fetch_trending()
+if trending:
+    st.markdown("""
+    <div style='padding: 2rem 4rem 1rem 4rem; border-top: 1px solid #1a1a1a;'>
+        <div style='color:white; font-size:1.3rem; font-weight:700; margin-bottom:0.3rem'>Trending This Week</div>
+        <div style='color:#666; font-size:0.85rem; margin-bottom:1.5rem'>Most popular movies right now</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div style="padding: 0 4rem;">', unsafe_allow_html=True)
+    cols = st.columns(5)
+    for idx, col in enumerate(cols):
+        movie = trending[idx]
+        with col:
+            if movie["poster"]:
+                st.image(movie["poster"], use_container_width=True)
+            else:
+                st.markdown("<div style='background:#2a2a2a; height:300px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#555'>No Poster</div>", unsafe_allow_html=True)
+            try:
+                r = float(movie["rating"])
+                rating_display = f"&#11088; {r:.1f}/10"
+            except:
+                rating_display = "N/A"
+            st.markdown(f"""
+            <div class="movie-info">
+                <div class="movie-title">{movie['title']}</div>
+                <div class="movie-rating">{rating_display}</div>
+                <div class="movie-overview">{movie['overview']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown('<div style="height:1.5rem"></div>', unsafe_allow_html=True)
+    cols2 = st.columns(5)
+    for idx, col in enumerate(cols2):
+        movie = trending[idx + 5]
+        with col:
+            if movie["poster"]:
+                st.image(movie["poster"], use_container_width=True)
+            else:
+                st.markdown("<div style='background:#2a2a2a; height:300px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#555'>No Poster</div>", unsafe_allow_html=True)
+            try:
+                r = float(movie["rating"])
+                rating_display = f"&#11088; {r:.1f}/10"
+            except:
+                rating_display = "N/A"
+            st.markdown(f"""
+            <div class="movie-info">
+                <div class="movie-title">{movie['title']}</div>
+                <div class="movie-rating">{rating_display}</div>
+                <div class="movie-overview">{movie['overview']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # -------------------- RESULTS --------------------
 if search_clicked:
@@ -351,30 +301,20 @@ if search_clicked:
 
     for idx, col in enumerate(cols):
         with col:
-            # Rating stars
             try:
                 r = float(ratings[idx])
-                stars = "⭐" * round(r / 2)
-                rating_display = f"{r:.1f}/10  {stars}"
+                stars = "&#11088;" * round(r / 2)
+                rating_display = f"{r:.1f}/10 {stars}"
             except:
                 rating_display = "N/A"
 
-            # Genre tags
             genre_html = "".join([f'<span class="genre-tag">{g}</span>' for g in genres[idx]])
+            trailer_html = f'<a class="trailer-btn" href="{trailers[idx]}" target="_blank">Watch Trailer</a>' if trailers[idx] else '<span style="color:#555; font-size:0.8rem">No trailer available</span>'
 
-            # Trailer button
-            trailer_html = f'<a class="trailer-btn" href="{trailers[idx]}" target="_blank">▶ Watch Trailer</a>' if trailers[idx] else '<span style="color:#555; font-size:0.8rem">No trailer available</span>'
-
-            # Poster
             if posters[idx]:
                 st.image(posters[idx], use_container_width=True)
             else:
-                st.markdown("""
-                <div style='background:#2a2a2a; height:300px; border-radius:8px;
-                display:flex; align-items:center; justify-content:center; color:#555'>
-                    🎬 No Poster
-                </div>
-                """, unsafe_allow_html=True)
+                st.markdown("<div style='background:#2a2a2a; height:300px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#555'>No Poster</div>", unsafe_allow_html=True)
 
             st.markdown(f"""
             <div class="movie-info">
@@ -386,4 +326,4 @@ if search_clicked:
             </div>
             """, unsafe_allow_html=True)
 
-    
+    st.markdown('</div>', unsafe_allow_html=True)
