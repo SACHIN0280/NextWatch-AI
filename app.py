@@ -150,7 +150,7 @@ if trending:
     st.markdown("""
     <div style='padding: 2rem 4rem 1rem 4rem;'>
         <div style='color:white; font-size:1.3rem; font-weight:700; margin-bottom:0.3rem'>
-            🔥 Trending This Week
+             Trending This Week
         </div>
         <div style='color:#666; font-size:0.85rem; margin-bottom:1.5rem'>
             Most popular movies right now
