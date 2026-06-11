@@ -30,84 +30,7 @@ def load_data():
 movies_dict, similarity = load_data()
 movies = pd.DataFrame(movies_dict)
 # -------------------- BACKGROUND --------------------
-def set_styling():
-    css = """
-    <style>
-    .stApp {
-        background-color: #1E90FF !important;
-    }
-    .block-container {
-        background-color: transparent !important;
-        padding-top: 8rem !important;
-    }
-    /* Netflix-style title */
-    h1 {
-        color: #E50914 !important;
-        text-align: center !important;
-        font-size: 4rem !important;
-        font-weight: 900 !important;
-        font-family: 'Arial Black', sans-serif !important;
-        text-shadow: 2px 2px 0px #000, 4px 4px 0px rgba(0,0,0,0.3) !important;
-        letter-spacing: 2px !important;
-        margin-bottom: 0.5rem !important;
-    }
-    /* Subtitle */
-    p {
-        text-align: center !important;
-        color: white !important;
-        text-shadow: 1px 1px 3px black !important;
-    }
-    /* Center and style selectbox */
-    div[data-testid="stSelectbox"] {
-        width: 100% !important;
-        margin: 0 auto !important;
-    }
-    div[data-testid="stSelectbox"] label {
-        display: none !important;
-    }
-    div[data-testid="stSelectbox"] > div {
-        background-color: rgba(0,0,0,0.7) !important;
-        border: 1px solid #E50914 !important;
-        border-radius: 5px !important;
-        color: white !important;
-    }
-    /* Center search button */
-    div[data-testid="stButton"] {
-        display: flex !important;
-        justify-content: center !important;
-        width: 100% !important;
-    }
-    div[data-testid="stButton"] button {
-        background-color: #E50914 !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 5px !important;
-        padding: 0.6rem 4rem !important;
-        font-size: 1.1rem !important;
-        font-weight: bold !important;
-        width: 100% !important;
-    }
-    div[data-testid="stButton"] button:hover {
-        background-color: #b20710 !important;
-    }
-    /* White text everywhere */
-    div, span, label {
-        color: white !important;
-    }
-    /* Results dark background */
-    div[data-testid="stColumns"] {
-        background-color: rgba(0, 0, 0, 0.75);
-        border-radius: 10px;
-        padding: 1rem;
-        margin-top: 2rem;
-    }
-    </style>
-    """
-    st.markdown(css, unsafe_allow_html=True)
-
-# -------------------- API FETCH FUNCTIONS --------------------
-# (Keep your existing fetch_movie_details, fetch_trailer, and fetch_all exactly the same)
-
+# -------------------- FETCH FUNCTIONS --------------------
 def fetch_movie_details(movie_id):
     try:
         url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key={API_KEY}&language=en-US"
@@ -115,9 +38,11 @@ def fetch_movie_details(movie_id):
         poster_path = data.get('poster_path', '')
         poster = f"https://image.tmdb.org/t/p/w500/{poster_path}" if poster_path else None
         rating = data.get('vote_average', 'N/A')
-        return poster, rating
+        overview = data.get('overview', 'No description available.')
+        genres = [g['name'] for g in data.get('genres', [])][:3]
+        return poster, rating, overview, genres
     except Exception:
-        return None, 'N/A'
+        return None, 'N/A', 'No description available.', []
 
 def fetch_trailer(movie_id):
     try:
@@ -132,9 +57,9 @@ def fetch_trailer(movie_id):
         return None
 
 def fetch_all(movie_id):
-    poster, rating = fetch_movie_details(movie_id)
+    poster, rating, overview, genres = fetch_movie_details(movie_id)
     trailer = fetch_trailer(movie_id)
-    return poster, rating, trailer
+    return poster, rating, overview, genres, trailer
 
 # -------------------- RECOMMEND --------------------
 def recommend(movie):
@@ -152,66 +77,229 @@ def recommend(movie):
     with ThreadPoolExecutor(max_workers=5) as executor:
         results = list(executor.map(fetch_all, movie_ids))
 
-    posters = [r[0] for r in results]
-    ratings = [r[1] for r in results]
-    trailers = [r[2] for r in results]
+    posters   = [r[0] for r in results]
+    ratings   = [r[1] for r in results]
+    overviews = [r[2] for r in results]
+    genres    = [r[3] for r in results]
+    trailers  = [r[4] for r in results]
 
-    return movie_names, posters, ratings, trailers
+    return movie_names, posters, ratings, overviews, genres, trailers
 
-# -------------------- UI --------------------
-set_styling()
+# -------------------- PAGE CONFIG --------------------
+st.set_page_config(page_title="NextWatch.AI", page_icon="🎬", layout="wide")
 
-st.markdown("<h1>NEXTWATCH.AI</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; font-size:1.1rem; color:#cccccc; text-shadow: 1px 1px 3px black;'>Find movies you'll love</p>", unsafe_allow_html=True)
+# -------------------- CSS --------------------
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
 
-col_left, col_center, col_right = st.columns([1, 2, 1])
+* { font-family: 'Inter', sans-serif !important; }
+
+.stApp {
+    background: #0f0f0f !important;
+}
+.block-container {
+    padding: 0 !important;
+    max-width: 100% !important;
+}
+
+/* Hero */
+.hero {
+    background: linear-gradient(180deg, #1a0000 0%, #0f0f0f 100%);
+    padding: 5rem 4rem 3rem 4rem;
+    text-align: center;
+    border-bottom: 1px solid #1a1a1a;
+}
+.hero-title {
+    font-size: 4rem;
+    font-weight: 900;
+    color: #E50914;
+    letter-spacing: 3px;
+    text-shadow: 0 0 40px rgba(229,9,20,0.4);
+    margin-bottom: 0.5rem;
+}
+.hero-sub {
+    color: #888;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+}
+
+/* Search bar */
+div[data-testid="stSelectbox"] > div {
+    background-color: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    border-radius: 8px !important;
+    color: white !important;
+}
+div[data-testid="stSelectbox"] label { display: none !important; }
+
+/* Search button */
+div[data-testid="stButton"] button {
+    background: #E50914 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    height: 45px !important;
+    white-space: nowrap !important;
+    width: 100% !important;
+    transition: background 0.2s !important;
+}
+div[data-testid="stButton"] button:hover {
+    background: #ff1a27 !important;
+}
+
+/* Movie card */
+.movie-card {
+    background: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s;
+    height: 100%;
+    border: 1px solid #2a2a2a;
+}
+.movie-card:hover { transform: translateY(-4px); }
+
+.movie-info {
+    padding: 1rem;
+}
+.movie-title {
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+}
+.movie-rating {
+    color: #f5c518;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+.genre-tag {
+    display: inline-block;
+    background: #2a2a2a;
+    color: #aaa;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    margin: 0.1rem;
+}
+.movie-overview {
+    color: #888;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    margin-top: 0.6rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.trailer-btn {
+    display: inline-block;
+    margin-top: 0.8rem;
+    background: #E50914;
+    color: white !important;
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none !important;
+}
+
+/* Results header */
+.results-header {
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 2rem 4rem 1rem 4rem;
+    border-top: 1px solid #1a1a1a;
+}
+.results-sub {
+    color: #666;
+    font-size: 0.85rem;
+    padding: 0 4rem 1.5rem 4rem;
+}
+
+/* Spinner */
+div[data-testid="stSpinner"] { color: white !important; }
+
+/* Override streamlit white backgrounds */
+div, span, p, label { color: inherit; }
+</style>
+""", unsafe_allow_html=True)
+
+# -------------------- HERO --------------------
+st.markdown("""
+<div class="hero">
+    <div class="hero-title">NEXTWATCH.AI</div>
+    <div class="hero-sub">Discover your next favorite movie</div>
+</div>
+""", unsafe_allow_html=True)
+
+# -------------------- SEARCH --------------------
+st.markdown('<div style="padding: 2rem 4rem;">', unsafe_allow_html=True)
+col_left, col_center, col_right = st.columns([1, 3, 1])
 with col_center:
-    st.markdown("""
-    <style>
-    [data-testid="stHorizontalBlock"] {
-        align-items: center !important;
-        gap: 8px !important;
-    }
-    [data-testid="stButton"] button {
-        height: 45px !important;
-        white-space: nowrap !important;
-        padding: 0 20px !important;
-        margin-top: 4px !important;
-        background-color: #E50914 !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 5px !important;
-        font-size: 1rem !important;
-        font-weight: bold !important;
-        width: 100% !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    search_col, btn_col = st.columns([4, 1])
+    search_col, btn_col = st.columns([5, 1])
     with search_col:
         selected_movie = st.selectbox("", movies['title'].values)
     with btn_col:
-        search_clicked = st.button("🔍")
+        st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+        search_clicked = st.button("🔍 Search")
+st.markdown('</div>', unsafe_allow_html=True)
 
 # -------------------- RESULTS --------------------
 if search_clicked:
     with st.spinner('Finding recommendations...'):
-        names, posters, ratings, trailers = recommend(selected_movie)
+        names, posters, ratings, overviews, genres, trailers = recommend(selected_movie)
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    col1, col2, col3, col4, col5 = st.columns(5)
-    cols = [col1, col2, col3, col4, col5]
+    st.markdown(f"""
+    <div class="results-header">Recommended for you</div>
+    <div class="results-sub">Because you liked <strong style="color:white">{selected_movie}</strong></div>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div style="padding: 0 4rem 4rem 4rem;">', unsafe_allow_html=True)
+    cols = st.columns(5)
 
     for idx, col in enumerate(cols):
         with col:
-            st.text(names[idx])
+            # Rating stars
+            try:
+                r = float(ratings[idx])
+                stars = "⭐" * round(r / 2)
+                rating_display = f"{r:.1f}/10  {stars}"
+            except:
+                rating_display = "N/A"
+
+            # Genre tags
+            genre_html = "".join([f'<span class="genre-tag">{g}</span>' for g in genres[idx]])
+
+            # Trailer button
+            trailer_html = f'<a class="trailer-btn" href="{trailers[idx]}" target="_blank">▶ Watch Trailer</a>' if trailers[idx] else '<span style="color:#555; font-size:0.8rem">No trailer available</span>'
+
+            # Poster
             if posters[idx]:
-                st.image(posters[idx])
+                st.image(posters[idx], use_container_width=True)
             else:
-                st.write("No poster available")
-            st.write(f"⭐ {ratings[idx]}")
-            if trailers[idx]:
-                st.markdown(f"[▶ Trailer]({trailers[idx]})")
-            else:
-                st.write("No trailer")
+                st.markdown("""
+                <div style='background:#2a2a2a; height:300px; border-radius:8px;
+                display:flex; align-items:center; justify-content:center; color:#555'>
+                    🎬 No Poster
+                </div>
+                """, unsafe_allow_html=True)
+
+            st.markdown(f"""
+            <div class="movie-info">
+                <div class="movie-title">{names[idx]}</div>
+                <div class="movie-rating">{rating_display}</div>
+                {genre_html}
+                <div class="movie-overview">{overviews[idx]}</div>
+                {trailer_html}
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)t.write("No trailer")
