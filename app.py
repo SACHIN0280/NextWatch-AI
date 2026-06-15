@@ -181,16 +181,16 @@ st.markdown(f"""
 }}
 
 /* Selectbox */
-div[data-testid="stSelectbox"] > div {
+div[data-testid="stSelectbox"] > div {{
     background-color: rgba(0, 0, 0, 0.7) !important;
     border: 1px solid #333 !important;
     border-radius: 4px !important;
     color: white !important;
-}
-div[data-testid="stSelectbox"] label { display: none !important; }
+}}
+div[data-testid="stSelectbox"] label {{ display: none !important; }}
 
 /* Buttons */
-div[data-testid="stButton"] button {
+div[data-testid="stButton"] button {{
     background: #e50914 !important;
     color: white !important;
     border: none !important;
@@ -199,29 +199,29 @@ div[data-testid="stButton"] button {
     font-size: 1.1rem !important;
     height: 48px !important;
     transition: background 0.2s ease !important;
-}
-div[data-testid="stButton"] button:hover {
+}}
+div[data-testid="stButton"] button:hover {{
     background: #f40612 !important;
-}
+}}
 
 /* Movie Card Wrappers */
-.movie-card {
+.movie-card {{
     position: relative;
     background: #141414;
     border-radius: 4px;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.3s, box-shadow 0.3s;
     cursor: pointer;
     z-index: 1;
-}
-.movie-card:hover {
+}}
+.movie-card:hover {{
     transform: scale(1.15) translateY(-10px);
     z-index: 100;
     box-shadow: 0 10px 20px rgba(0,0,0,0.8);
     border-radius: 4px;
-}
+}}
 
 /* Movie Info */
-.movie-info { 
+.movie-info {{ 
     position: absolute;
     bottom: 0;
     left: 0;
@@ -232,12 +232,12 @@ div[data-testid="stButton"] button:hover {
     transition: opacity 0.3s ease;
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
-}
-.movie-card:hover .movie-info {
+}}
+.movie-card:hover .movie-info {{
     opacity: 1;
-}
+}}
 
-.movie-title {
+.movie-title {{
     color: #fff;
     font-weight: bold;
     font-size: 1rem;
@@ -245,33 +245,33 @@ div[data-testid="stButton"] button:hover {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-.movie-rating {
+}}
+.movie-rating {{
     color: #46d369; /* Netflix Match Green */
     font-size: 0.85rem;
     font-weight: bold;
     margin-bottom: 0.4rem;
-}
-.movie-cast {
+}}
+.movie-cast {{
     display: none;
-}
-.genre-tag {
+}}
+.genre-tag {{
     color: #fff;
     font-size: 0.75rem;
     margin-right: 0.3rem;
-}
-.genre-tag::after {
+}}
+.genre-tag::after {{
     content: ' •';
     color: #646464;
     margin-left: 0.3rem;
-}
-.genre-tag:last-child::after {
+}}
+.genre-tag:last-child::after {{
     content: '';
-}
-.movie-overview {
+}}
+.movie-overview {{
     display: none;
-}
-.trailer-btn {
+}}
+.trailer-btn {{
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -285,29 +285,29 @@ div[data-testid="stButton"] button:hover {
     text-decoration: none !important;
     width: 100%;
     transition: background 0.2s;
-}
-.trailer-btn:hover {
+}}
+.trailer-btn:hover {{
     background: #e6e6e6;
-}
+}}
 
 /* Headers */
-.results-header {
+.results-header {{
     color: #e5e5e5;
     font-size: 1.6rem;
     font-weight: bold;
     padding: 2rem 4rem 0.5rem 4rem;
-}
-.results-sub {
+}}
+.results-sub {{
     display: none;
-}
+}}
 
 /* Poster Styling */
-.poster-img {
+.poster-img {{
     width: 100%;
     border-radius: 4px;
     display: block;
-}
-.no-poster {
+}}
+.no-poster {{
     background: #222;
     height: 300px;
     border-radius: 4px;
@@ -316,14 +316,14 @@ div[data-testid="stButton"] button:hover {
     justify-content: center;
     color: #666;
     font-weight: bold;
-}
+}}
 
 /* Custom st.columns padding */
-div[data-testid="column"] {
+div[data-testid="column"] {{
     padding: 0.25rem;
-}
-div[data-testid="stSpinner"] { color: white !important; }
-div, span, p, label { color: inherit; }
+}}
+div[data-testid="stSpinner"] {{ color: white !important; }}
+div, span, p, label {{ color: inherit; }}
 </style>
 """, unsafe_allow_html=True)
 
