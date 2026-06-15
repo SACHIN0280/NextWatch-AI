@@ -77,6 +77,34 @@ def fetch_trending():
     except Exception:
         return []
 
+def fetch_full_movie_details(movie_id):
+    try:
+        url = f"https://api.themoviedb.org/3/movie/{{movie_id}}?api_key={{API_KEY}}&language=en-US"
+        data = requests.get(url, timeout=10).json()
+        poster_path = data.get('poster_path', '')
+        backdrop_path = data.get('backdrop_path', '')
+        poster = f"https://image.tmdb.org/t/p/w500/{{poster_path}}" if poster_path else None
+        backdrop = f"https://image.tmdb.org/t/p/original/{{backdrop_path}}" if backdrop_path else None
+        
+        r = data.get('vote_average', 0)
+        rating = f"{{int(float(r) * 10)}}%" if r else "N/A"
+        
+        overview = data.get('overview', 'No description available.')
+        genres = [g['name'] for g in data.get('genres', [])]
+        title = data.get('title', 'Unknown')
+        
+        trailer_url = f"https://api.themoviedb.org/3/movie/{{movie_id}}/videos?api_key={{API_KEY}}&language=en-US"
+        trailer_data = requests.get(trailer_url, timeout=10).json()
+        trailer = None
+        for video in trailer_data.get('results', []):
+            if video['type'] == 'Trailer':
+                trailer = f"https://www.youtube.com/watch?v={{video['key']}}"
+                break
+                
+        return title, poster, backdrop, rating, overview, genres, trailer
+    except Exception:
+        return 'Unknown', None, None, 'N/A', 'No description available.', [], None
+
 # -------------------- RECOMMEND --------------------
 def recommend(movie):
     movie_index = movies[movies['title'] == movie].index[0]
@@ -99,7 +127,7 @@ def recommend(movie):
     genres    = [r[3] for r in results]
     trailers  = [r[4] for r in results]
 
-    return movie_names, posters, ratings, overviews, genres, trailers
+    return movie_names, posters, ratings, overviews, genres, trailers, movie_ids
 
 # -------------------- PAGE CONFIG --------------------
 st.set_page_config(page_title="NextWatch.AI", page_icon="🎬", layout="wide")
@@ -434,6 +462,39 @@ div, span, p, label {{ color: inherit; }}
 """
 st.markdown(custom_css, unsafe_allow_html=True)
 
+# -------------------- ROUTING --------------------
+query_params = st.query_params
+if "movie_id" in query_params:
+    movie_id = query_params["movie_id"]
+    title, poster, backdrop, rating, overview, genres, trailer = fetch_full_movie_details(movie_id)
+    
+    st.markdown('<div style="height: 2rem;"></div>', unsafe_allow_html=True)
+    if st.button("❮ Back to Home", key="back_btn"):
+        del st.query_params["movie_id"]
+        st.rerun()
+        
+    bg_img = backdrop if backdrop else (poster if poster else "")
+    st.markdown(f"""
+    <div style="position: absolute; top:0; left:0; width:100%; height:70vh; background: url('{bg_img}') center/cover; opacity:0.15; z-index:-1; filter:blur(8px); mask-image: linear-gradient(to bottom, black 40%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);"></div>
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; gap: 4rem; padding: 2rem 1rem 4rem 1rem; align-items: flex-start; flex-wrap: wrap;">
+        <img src="{poster}" style="border-radius: 16px; width: 350px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1);">
+        <div style="flex: 1; min-width: 300px; padding-top: 1rem;">
+            <h1 style="font-size: 4rem; font-weight:800; margin-bottom: 0.5rem; line-height: 1.1; color: #FFFFFF; text-shadow: 0 4px 20px rgba(0,0,0,0.5);">{title}</h1>
+            <div style="color: #46d369; font-size: 1.2rem; font-weight:700; margin-bottom: 1rem;">{rating} Match</div>
+            <div style="margin-bottom: 1.5rem;">{" ".join([f'<span class="genre-tag" style="font-size:1rem;">{g}</span>' for g in genres])}</div>
+            <p style="font-size: 1.2rem; line-height: 1.6; color: #CBD5E1; margin-bottom: 2rem; max-width: 800px;">{overview}</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    if trailer:
+        st.markdown("<h2 style='max-width: 1200px; margin: 0 auto; padding: 0 1rem; margin-bottom: 1rem; font-weight: 800;'>Official Trailer</h2>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1, 10, 1])
+        with col2:
+            st.video(trailer)
+            
+    st.stop() # Halt execution so the home page does not render
+
 # -------------------- HERO & SEARCH --------------------
 st.markdown("""
 <div class="nav-header">
@@ -490,6 +551,7 @@ body { background: transparent; margin: 0; padding: 0; overflow: hidden; }
         poster_html = f'<img src="{movie["poster"]}" class="poster-img">' if movie["poster"] else "<div class='no-poster'>No Poster</div>"
 
         slider_html += f"""<div class="slider-item">
+<a href="?movie_id={movie['id']}" target="_parent" style="text-decoration:none; color:inherit; display:block; height:100%;">
 <div class="movie-card">
 {poster_html}
 <div class="movie-info">
@@ -498,6 +560,7 @@ body { background: transparent; margin: 0; padding: 0; overflow: hidden; }
 <div class="movie-overview">{movie['overview']}</div>
 </div>
 </div>
+</a>
 </div>"""
     slider_html += '''</div>
 <button class="slider-btn right-btn" onclick="this.previousElementSibling.scrollBy({left: 600, behavior: 'smooth'})">&#10095;</button>
@@ -509,7 +572,7 @@ body { background: transparent; margin: 0; padding: 0; overflow: hidden; }
 # -------------------- RESULTS --------------------
 if search_clicked:
     with st.spinner('Finding recommendations...'):
-        names, posters, ratings, overviews, genres, trailers = recommend(selected_movie)
+        names, posters, ratings, overviews, genres, trailers, movie_ids = recommend(selected_movie)
 
     st.markdown(f"""
     <div class="results-header">Recommended for you</div>
@@ -526,10 +589,10 @@ if search_clicked:
             rating_display = "N/A"
 
         genre_html = "".join([f'<span class="genre-tag">{g}</span>' for g in genres[idx]])
-        trailer_html = f'<a class="trailer-btn" href="{trailers[idx]}" target="_blank">Watch Trailer</a>' if trailers[idx] else '<span style="color:#555; font-size:0.8rem; display:block; margin-top:1rem">No trailer available</span>'
         poster_html = f'<img src="{posters[idx]}" class="poster-img">' if posters[idx] else "<div class='no-poster'>No Poster</div>"
 
         slider_html += f"""<div class="slider-item">
+<a href="?movie_id={movie_ids[idx]}" target="_parent" style="text-decoration:none; color:inherit; display:block; height:100%;">
 <div class="movie-card">
 {poster_html}
 <div class="movie-info">
@@ -537,9 +600,9 @@ if search_clicked:
 <div class="movie-rating">{rating_display}</div>
 {genre_html}
 <div class="movie-overview">{overviews[idx]}</div>
-{trailer_html}
 </div>
 </div>
+</a>
 </div>"""
     slider_html += '''</div>
 </div>'''
