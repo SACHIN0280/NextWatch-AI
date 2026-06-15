@@ -151,6 +151,12 @@ custom_css = f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
 
+/* Hide Streamlit Default UI Elements */
+[data-testid="stHeader"] {{ display: none !important; }}
+#MainMenu {{ visibility: hidden; }}
+footer {{ visibility: hidden; }}
+.stDeployButton {{ display: none !important; }}
+
 * {{ font-family: 'Inter', sans-serif !important; }}
 .stApp {{ 
     background: #05070D !important; 
