@@ -182,7 +182,7 @@ st.markdown(f"""
 }}
 
 /* Search Area Glassmorphism */
-.search-container {{
+div[data-testid="stHorizontalBlock"] {{
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -191,6 +191,7 @@ st.markdown(f"""
     max-width: 800px;
     margin: 0 auto;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    align-items: center;
 }}
 
 /* Selectbox */
@@ -422,13 +423,11 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="search-container">', unsafe_allow_html=True)
 search_col, btn_col = st.columns([7, 3])
 with search_col:
     selected_movie = st.selectbox("Email address", movies['title'].values, label_visibility="collapsed")
 with btn_col:
     search_clicked = st.button("Get Started >")
-st.markdown('</div>', unsafe_allow_html=True)
 st.markdown('<div style="height: 15vh;"></div>', unsafe_allow_html=True)
 
 # -------------------- TRENDING --------------------
