@@ -482,6 +482,22 @@ if "movie_id" in query_params:
     movie_id = query_params["movie_id"]
     title, poster, backdrop, rating, overview, genres, trailer = fetch_full_movie_details(movie_id)
     
+    components.html(
+        """<script>
+        try {
+            const doc = window.parent.document;
+            const main = doc.querySelector('.main') || doc.querySelector('.stApp');
+            if (main) {
+                main.scrollTo({top: 0, behavior: 'instant'});
+            }
+            window.parent.scrollTo({top: 0, behavior: 'instant'});
+        } catch (e) {
+            console.log("Scroll failed", e);
+        }
+        </script>""",
+        height=0
+    )
+    
     st.markdown(NAV_HTML, unsafe_allow_html=True)
     
     b_col1, b_col2 = st.columns([2, 10])
