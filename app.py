@@ -535,28 +535,6 @@ st.markdown('<div style="height: 15vh;"></div>', unsafe_allow_html=True)
 
 MovieSlider = components.declare_component("movie_slider", path="movie_slider")
 
-# -------------------- TRENDING --------------------
-trending = fetch_trending()
-if trending:
-    st.markdown("""
-    <div style='max-width: 1200px; margin: 0 auto; padding: 2rem 1rem 1rem 1rem;'>
-        <div style='color:#FFFFFF; font-size:2rem; font-weight:800; margin-bottom:0.3rem'>Trending This Week</div>
-        <div style='color:#CBD5E1; font-size:1.1rem; margin-bottom:1.5rem; font-weight:500;'>Most popular movies right now</div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    for m in trending:
-        try:
-            r = float(m["rating"])
-            m["rating"] = f"{int(r * 10)}% Match"
-        except:
-            m["rating"] = "N/A"
-            
-    clicked_trend = MovieSlider(movies=trending, mode="slider", key="trending_slider")
-    if clicked_trend:
-        st.query_params["movie_id"] = clicked_trend
-        st.rerun()
-
 # -------------------- RESULTS --------------------
 if search_clicked:
     st.session_state.search_movie = selected_movie
@@ -590,4 +568,26 @@ if "search_movie" in st.session_state:
     clicked_res = MovieSlider(movies=results_data, mode="grid", key="results_slider")
     if clicked_res:
         st.query_params["movie_id"] = clicked_res
+        st.rerun()
+
+# -------------------- TRENDING --------------------
+trending = fetch_trending()
+if trending:
+    st.markdown("""
+    <div style='max-width: 1200px; margin: 0 auto; padding: 2rem 1rem 1rem 1rem;'>
+        <div style='color:#FFFFFF; font-size:2rem; font-weight:800; margin-bottom:0.3rem'>Trending This Week</div>
+        <div style='color:#CBD5E1; font-size:1.1rem; margin-bottom:1.5rem; font-weight:500;'>Most popular movies right now</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    for m in trending:
+        try:
+            r = float(m["rating"])
+            m["rating"] = f"{int(r * 10)}% Match"
+        except:
+            m["rating"] = "N/A"
+            
+    clicked_trend = MovieSlider(movies=trending, mode="slider", key="trending_slider")
+    if clicked_trend:
+        st.query_params["movie_id"] = clicked_trend
         st.rerun()
