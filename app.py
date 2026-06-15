@@ -551,7 +551,7 @@ body { background: transparent; margin: 0; padding: 0; overflow: hidden; }
         poster_html = f'<img src="{movie["poster"]}" class="poster-img">' if movie["poster"] else "<div class='no-poster'>No Poster</div>"
 
         slider_html += f"""<div class="slider-item">
-<a href="?movie_id={movie['id']}" target="_parent" style="text-decoration:none; color:inherit; display:block; height:100%;">
+<a href="?movie_id={movie['id']}" target="_blank" style="text-decoration:none; color:inherit; display:block; height:100%;">
 <div class="movie-card">
 {poster_html}
 <div class="movie-info">
@@ -592,7 +592,7 @@ if search_clicked:
         poster_html = f'<img src="{posters[idx]}" class="poster-img">' if posters[idx] else "<div class='no-poster'>No Poster</div>"
 
         slider_html += f"""<div class="slider-item">
-<a href="?movie_id={movie_ids[idx]}" target="_parent" style="text-decoration:none; color:inherit; display:block; height:100%;">
+<a href="?movie_id={movie_ids[idx]}" target="_blank" style="text-decoration:none; color:inherit; display:block; height:100%;">
 <div class="movie-card">
 {poster_html}
 <div class="movie-info">
