@@ -243,19 +243,19 @@ div[data-testid="stSelectbox"] label {{ display: none !important; }}
 
 /* Buttons */
 div[data-testid="stButton"] button {{
-    background: transparent !important;
+    background: #FF1E1E !important;
     color: #FFFFFF !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border: none !important;
     border-radius: 8px !important;
-    font-weight: 600 !important;
-    font-size: 1rem !important;
-    height: 40px !important;
-    box-shadow: none !important;
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    height: 48px !important;
+    box-shadow: 0 0 15px rgba(255, 30, 30, 0.4) !important;
     transition: all 0.3s ease !important;
 }}
 div[data-testid="stButton"] button:hover {{
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-color: #FFFFFF !important;
+    background: #ff3333 !important;
+    box-shadow: 0 0 25px rgba(255, 30, 30, 0.6) !important;
     transform: translateY(-2px) !important;
 }}
 
