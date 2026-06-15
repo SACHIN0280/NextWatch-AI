@@ -242,6 +242,9 @@ div[data-testid="stButton"] button:hover {{
     -ms-overflow-style: none;
     scrollbar-width: none;
 }}
+.center-row {{
+    justify-content: center;
+}}
 .slider-row::-webkit-scrollbar {{
     display: none;
 }}
@@ -390,6 +393,7 @@ div[data-testid="stButton"] button:hover {{
     padding: 2rem 1rem 0.5rem 1rem;
     max-width: 1200px;
     margin: 0 auto;
+    text-align: center;
 }}
 .results-sub {{
     color: #CBD5E1;
@@ -397,6 +401,7 @@ div[data-testid="stButton"] button:hover {{
     padding: 0 1rem 2rem 1rem;
     max-width: 1200px;
     margin: 0 auto;
+    text-align: center;
 }}
 
 /* Poster Styling */
@@ -500,8 +505,7 @@ if search_clicked:
     """, unsafe_allow_html=True)
 
     slider_html = '''<div class="slider-wrapper">
-<button class="slider-btn left-btn" onclick="this.nextElementSibling.scrollBy({left: -600, behavior: 'smooth'})">&#10094;</button>
-<div class="slider-row">'''
+<div class="slider-row center-row">'''
     for idx in range(len(names)):
         try:
             r = float(ratings[idx])
@@ -526,6 +530,5 @@ if search_clicked:
 </div>
 </div>"""
     slider_html += '''</div>
-<button class="slider-btn right-btn" onclick="this.previousElementSibling.scrollBy({left: 600, behavior: 'smooth'})">&#10095;</button>
 </div>'''
     st.markdown(slider_html, unsafe_allow_html=True)
