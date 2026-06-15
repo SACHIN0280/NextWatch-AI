@@ -526,7 +526,7 @@ if "movie_id" in query_params:
             <div style="color: #46d369; font-size: 1.2rem; font-weight:700; margin-bottom: 1rem;">{rating} Match</div>
             <div style="margin-bottom: 1.5rem;">{" ".join([f'<span class="genre-tag" style="font-size:1rem;">{g}</span>' for g in genres])}</div>
             <p style="font-size: 1.2rem; line-height: 1.6; color: #CBD5E1; margin-bottom: 2rem; max-width: 800px;">{overview}</p>
-            {{reviews_html}}
+            {reviews_html}
         </div>
     </div>
     """, unsafe_allow_html=True)
