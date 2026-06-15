@@ -556,12 +556,15 @@ if trending:
 
 # -------------------- RESULTS --------------------
 if search_clicked:
+    st.session_state.search_movie = selected_movie
+
+if "search_movie" in st.session_state:
     with st.spinner('Finding recommendations...'):
-        names, posters, ratings, overviews, genres, trailers, movie_ids = recommend(selected_movie)
+        names, posters, ratings, overviews, genres, trailers, movie_ids = recommend(st.session_state.search_movie)
 
     st.markdown(f"""
     <div class="results-header">Recommended for you</div>
-    <div class="results-sub">Because you liked <strong style="color:#FFFFFF">{selected_movie}</strong></div>
+    <div class="results-sub">Because you liked <strong style="color:#FFFFFF">{st.session_state.search_movie}</strong></div>
     """, unsafe_allow_html=True)
 
     results_data = []
