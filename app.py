@@ -4,7 +4,6 @@ import pandas as pd
 import requests
 import os
 import urllib.request
-import base64
 from concurrent.futures import ThreadPoolExecutor
 
 # -------------------- CONFIG --------------------
@@ -26,14 +25,6 @@ def load_data():
 
 movies_dict, similarity = load_data()
 movies = pd.DataFrame(movies_dict)
-
-def get_base64_image(image_path):
-    if os.path.exists(image_path):
-        with open(image_path, "rb") as img_file:
-            return base64.b64encode(img_file.read()).decode()
-    return ""
-
-bg_base64 = get_base64_image("bg_collage.png")
 
 # -------------------- FETCH FUNCTIONS --------------------
 def fetch_movie_details(movie_id):
@@ -132,7 +123,7 @@ st.markdown(f"""
     height: 75vh;
     background: linear-gradient(to top, #141414 0%, rgba(20,20,20,0.2) 50%, rgba(20,20,20,0.8) 100%), 
                 linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%), 
-                url("data:image/png;base64,{bg_base64}") no-repeat center center / cover;
+                url("https://raw.githubusercontent.com/SACHIN0280/NextWatch-AI/main/bg_collage.png") no-repeat center center / cover;
     z-index: -1;
     border-bottom: 8px solid #222;
 }}
@@ -204,10 +195,43 @@ div[data-testid="stButton"] button:hover {{
     background: #f40612 !important;
 }}
 
+/* Slider Row */
+.slider-container {{
+    padding: 0 4rem;
+    margin-bottom: 2rem;
+}}
+.slider-row {{
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 1.5rem;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+}}
+.slider-row::-webkit-scrollbar {{
+    height: 8px;
+}}
+.slider-row::-webkit-scrollbar-track {{
+    background: #141414;
+    border-radius: 4px;
+}}
+.slider-row::-webkit-scrollbar-thumb {{
+    background: #333;
+    border-radius: 4px;
+}}
+.slider-row::-webkit-scrollbar-thumb:hover {{
+    background: #52525b;
+}}
+.slider-item {{
+    flex: 0 0 220px;
+    scroll-snap-align: start;
+}}
+
 /* Movie Card Wrappers */
 .movie-card {{
     position: relative;
     background: #141414;
+    height: 100%;
     border-radius: 4px;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.3s, box-shadow 0.3s;
     cursor: pointer;
@@ -331,12 +355,11 @@ div, span, p, label {{ color: inherit; }}
 st.markdown("""
 <div class="nav-header">
     <div class="nav-logo">NEXTWATCH.AI</div>
-    <a href="#" class="nav-signin">Sign In</a>
 </div>
 <div style="height: 10vh;"></div>
 <div style="text-align: center; max-width: 800px; margin: 0 auto; padding: 2rem;">
-    <h1 style="font-size: 3.5rem; font-weight: 900; color: white; margin-bottom: 1rem; line-height: 1.2;">Unlimited movies, TV shows and more.</h1>
-    <p style="font-size: 1.5rem; color: white; margin-bottom: 2rem; font-weight: 500;">Starts at ₹149. Cancel anytime.</p>
+    <h1 style="font-size: 3.5rem; font-weight: 900; color: white; margin-bottom: 1rem; line-height: 1.2;">Discover your next cinematic obsession.</h1>
+    <p style="font-size: 1.5rem; color: white; margin-bottom: 2rem; font-weight: 500;">Powered by AI. Discover hidden gems instantly.</p>
     <p style="font-size: 1.2rem; color: white; margin-bottom: 1.5rem;">Ready to watch? Search for a movie to get recommendations.</p>
 </div>
 """, unsafe_allow_html=True)
@@ -360,20 +383,18 @@ if trending:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div style="padding: 0 4rem;">', unsafe_allow_html=True)
-    cols = st.columns(5)
-    for idx, col in enumerate(cols):
-        movie = trending[idx]
-        with col:
-            try:
-                r = float(movie["rating"])
-                rating_display = f"{int(r * 10)}% Match"
-            except:
-                rating_display = "N/A"
-            
-            poster_html = f'<img src="{movie["poster"]}" class="poster-img">' if movie["poster"] else "<div class='no-poster'>No Poster</div>"
+    slider_html = '<div class="slider-container"><div class="slider-row">'
+    for movie in trending:
+        try:
+            r = float(movie["rating"])
+            rating_display = f"{int(r * 10)}% Match"
+        except:
+            rating_display = "N/A"
+        
+        poster_html = f'<img src="{movie["poster"]}" class="poster-img">' if movie["poster"] else "<div class='no-poster'>No Poster</div>"
 
-            st.markdown(f"""
+        slider_html += f"""
+        <div class="slider-item">
             <div class="movie-card">
                 {poster_html}
                 <div class="movie-info">
@@ -382,32 +403,10 @@ if trending:
                     <div class="movie-overview">{movie['overview']}</div>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
-
-    st.markdown('<div style="height:1.5rem"></div>', unsafe_allow_html=True)
-    cols2 = st.columns(5)
-    for idx, col in enumerate(cols2):
-        movie = trending[idx + 5]
-        with col:
-            try:
-                r = float(movie["rating"])
-                rating_display = f"{int(r * 10)}% Match"
-            except:
-                rating_display = "N/A"
-            
-            poster_html = f'<img src="{movie["poster"]}" class="poster-img">' if movie["poster"] else "<div class='no-poster'>No Poster</div>"
-
-            st.markdown(f"""
-            <div class="movie-card">
-                {poster_html}
-                <div class="movie-info">
-                    <div class="movie-title">{movie['title']}</div>
-                    <div class="movie-rating">{rating_display}</div>
-                    <div class="movie-overview">{movie['overview']}</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+        </div>
+        """
+    slider_html += '</div></div>'
+    st.markdown(slider_html, unsafe_allow_html=True)
 
 # -------------------- RESULTS --------------------
 if search_clicked:
@@ -419,22 +418,20 @@ if search_clicked:
     <div class="results-sub">Because you liked <strong style="color:white">{selected_movie}</strong></div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div style="padding: 0 4rem 4rem 4rem;">', unsafe_allow_html=True)
-    cols = st.columns(5)
+    slider_html = '<div class="slider-container"><div class="slider-row">'
+    for idx in range(len(names)):
+        try:
+            r = float(ratings[idx])
+            rating_display = f"{int(r * 10)}% Match"
+        except:
+            rating_display = "N/A"
 
-    for idx, col in enumerate(cols):
-        with col:
-            try:
-                r = float(ratings[idx])
-                rating_display = f"{int(r * 10)}% Match"
-            except:
-                rating_display = "N/A"
+        genre_html = "".join([f'<span class="genre-tag">{g}</span>' for g in genres[idx]])
+        trailer_html = f'<a class="trailer-btn" href="{trailers[idx]}" target="_blank">Watch Trailer</a>' if trailers[idx] else '<span style="color:#555; font-size:0.8rem; display:block; margin-top:1rem">No trailer available</span>'
+        poster_html = f'<img src="{posters[idx]}" class="poster-img">' if posters[idx] else "<div class='no-poster'>No Poster</div>"
 
-            genre_html = "".join([f'<span class="genre-tag">{g}</span>' for g in genres[idx]])
-            trailer_html = f'<a class="trailer-btn" href="{trailers[idx]}" target="_blank">Watch Trailer</a>' if trailers[idx] else '<span style="color:#555; font-size:0.8rem; display:block; margin-top:1rem">No trailer available</span>'
-            poster_html = f'<img src="{posters[idx]}" class="poster-img">' if posters[idx] else "<div class='no-poster'>No Poster</div>"
-
-            st.markdown(f"""
+        slider_html += f"""
+        <div class="slider-item">
             <div class="movie-card">
                 {poster_html}
                 <div class="movie-info">
@@ -445,6 +442,7 @@ if search_clicked:
                     {trailer_html}
                 </div>
             </div>
-            """, unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
+        </div>
+        """
+    slider_html += '</div></div>'
+    st.markdown(slider_html, unsafe_allow_html=True)
