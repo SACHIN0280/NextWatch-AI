@@ -511,7 +511,7 @@ if "movie_id" in query_params:
     """, unsafe_allow_html=True)
     
     if trailer:
-        st.markdown("<h2 style='max-width: 1200px; margin: 0 auto; padding: 0 1rem; margin-bottom: 1rem; font-weight: 800;'>Official Trailer</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='max-width: 1200px; margin: 0 auto; text-align: center; padding: 0 1rem; margin-bottom: 1rem; font-weight: 800;'>Official Trailer</h2>", unsafe_allow_html=True)
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             st.video(trailer)
