@@ -106,12 +106,12 @@ st.set_page_config(page_title="NextWatch.AI", page_icon="🎬", layout="wide")
 # -------------------- CSS --------------------
 st.markdown(f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
 
-* {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important; }}
+* {{ font-family: 'Inter', sans-serif !important; }}
 .stApp {{ 
-    background: #141414 !important; 
-    color: #e5e5e5 !important;
+    background: #05070D !important; 
+    color: #FFFFFF !important;
     z-index: 0;
 }}
 .stApp::before {{
@@ -120,12 +120,13 @@ st.markdown(f"""
     top: 0;
     left: 0;
     width: 100%;
-    height: 75vh;
-    background: linear-gradient(to top, #141414 0%, rgba(20,20,20,0.2) 50%, rgba(20,20,20,0.8) 100%), 
+    height: 100vh;
+    background: linear-gradient(to top, #05070D 0%, rgba(5,7,13,0.4) 50%, #05070D 100%), 
                 linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%), 
                 url("https://raw.githubusercontent.com/SACHIN0280/NextWatch-AI/main/bg_collage.png") no-repeat center center / cover;
     z-index: -1;
-    border-bottom: 8px solid #222;
+    filter: blur(3px);
+    transform: scale(1.02); /* prevent blur edges */
 }}
 
 /* Custom Scrollbar */
@@ -133,14 +134,14 @@ st.markdown(f"""
     width: 10px;
 }}
 ::-webkit-scrollbar-track {{
-    background: #141414; 
+    background: #05070D; 
 }}
 ::-webkit-scrollbar-thumb {{
-    background: #333; 
+    background: #1E293B; 
     border-radius: 4px;
 }}
 ::-webkit-scrollbar-thumb:hover {{
-    background: #52525b; 
+    background: #CBD5E1; 
 }}
 
 .block-container {{ padding: 0 !important; max-width: 100% !important; margin-top: -6rem; }}
@@ -156,43 +157,67 @@ st.markdown(f"""
     z-index: 10;
 }}
 .nav-logo {{
-    color: #E50914;
+    color: #FF1E1E;
     font-size: 2.5rem;
-    font-weight: 900;
+    font-weight: 800;
     letter-spacing: -1px;
+    text-shadow: 0 0 20px rgba(255, 30, 30, 0.4);
 }}
-.nav-signin {{
-    background: #E50914;
-    color: white;
-    padding: 0.4rem 1rem;
-    border-radius: 4px;
-    font-weight: bold;
-    text-decoration: none;
-    font-size: 0.9rem;
+.nav-icons {{
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}}
+.nav-icons svg {{
+    width: 24px;
+    height: 24px;
+    stroke: #FFFFFF;
+    fill: none;
+    cursor: pointer;
+    transition: stroke 0.2s, transform 0.2s;
+}}
+.nav-icons svg:hover {{
+    stroke: #FF1E1E;
+    transform: scale(1.1);
+}}
+
+/* Search Area Glassmorphism */
+.search-container {{
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }}
 
 /* Selectbox */
 div[data-testid="stSelectbox"] > div {{
-    background-color: rgba(0, 0, 0, 0.7) !important;
-    border: 1px solid #333 !important;
-    border-radius: 4px !important;
-    color: white !important;
+    background-color: #0F172A !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    color: #FFFFFF !important;
 }}
 div[data-testid="stSelectbox"] label {{ display: none !important; }}
 
 /* Buttons */
 div[data-testid="stButton"] button {{
-    background: #e50914 !important;
-    color: white !important;
+    background: #FF1E1E !important;
+    color: #FFFFFF !important;
     border: none !important;
-    border-radius: 4px !important;
-    font-weight: bold !important;
+    border-radius: 8px !important;
+    font-weight: 800 !important;
     font-size: 1.1rem !important;
     height: 48px !important;
-    transition: background 0.2s ease !important;
+    box-shadow: 0 0 15px rgba(255, 30, 30, 0.4) !important;
+    transition: all 0.3s ease !important;
 }}
 div[data-testid="stButton"] button:hover {{
-    background: #f40612 !important;
+    background: #ff3333 !important;
+    box-shadow: 0 0 25px rgba(255, 30, 30, 0.6) !important;
+    transform: translateY(-2px) !important;
 }}
 
 /* Slider Row */
@@ -203,9 +228,9 @@ div[data-testid="stButton"] button:hover {{
 }}
 .slider-row {{
     display: flex;
-    gap: 10px;
+    gap: 15px;
     overflow-x: auto;
-    padding-bottom: 1.5rem;
+    padding-bottom: 2rem;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -ms-overflow-style: none;
@@ -215,59 +240,59 @@ div[data-testid="stButton"] button:hover {{
     display: none;
 }}
 .slider-item {{
-    flex: 0 0 160px;
+    flex: 0 0 180px; 
     scroll-snap-align: start;
 }}
 .slider-btn {{
     position: absolute;
-    top: 50%;
+    top: 45%;
     transform: translateY(-50%);
     z-index: 10;
-    background: rgba(0,0,0,0.5);
-    color: white;
-    border: none;
+    background: rgba(15, 23, 42, 0.8);
+    color: #FFFFFF;
+    border: 1px solid rgba(255,255,255,0.08);
     font-size: 2.5rem;
     padding: 1rem 0.5rem;
     cursor: pointer;
     opacity: 0;
-    transition: opacity 0.3s, background 0.3s;
-    height: 100%;
+    transition: all 0.3s ease;
+    height: 90%;
     display: flex;
     align-items: center;
     justify-content: center;
+    backdrop-filter: blur(4px);
+    border-radius: 8px;
 }}
 .slider-wrapper:hover .slider-btn {{
     opacity: 1;
 }}
 .slider-btn:hover {{
-    background: rgba(0,0,0,0.8);
+    background: #1E293B;
+    color: #FF1E1E;
 }}
 .left-btn {{
-    left: 0;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
+    left: 2rem;
 }}
 .right-btn {{
-    right: 0;
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
+    right: 2rem;
 }}
 
 /* Movie Card Wrappers */
 .movie-card {{
     position: relative;
-    background: #141414;
-    height: 100%;
-    border-radius: 4px;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.3s, box-shadow 0.3s;
+    background: #0F172A;
+    aspect-ratio: 2 / 3;
+    border-radius: 12px;
+    transition: transform 0.3s ease, z-index 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
     z-index: 1;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.05);
 }}
 .movie-card:hover {{
-    transform: scale(1.15) translateY(-10px);
+    transform: scale(1.05) translateY(-8px);
     z-index: 100;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.8);
-    border-radius: 4px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 20px rgba(255, 30, 30, 0.2);
 }}
 
 /* Movie Info */
@@ -276,103 +301,103 @@ div[data-testid="stButton"] button:hover {{
     bottom: 0;
     left: 0;
     width: 100%;
-    padding: 1.5rem 1rem 1rem 1rem;
-    background: linear-gradient(to top, rgba(20,20,20,1) 0%, rgba(20,20,20,0.8) 60%, transparent 100%);
+    padding: 2rem 1rem 1rem 1rem;
+    background: linear-gradient(to top, #05070D 0%, rgba(5,7,13,0.8) 50%, transparent 100%);
     opacity: 0;
     transition: opacity 0.3s ease;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
 }}
 .movie-card:hover .movie-info {{
     opacity: 1;
 }}
 
 .movie-title {{
-    color: #fff;
-    font-weight: bold;
-    font-size: 1rem;
-    margin-bottom: 0.2rem;
+    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }}
 .movie-rating {{
-    color: #46d369; /* Netflix Match Green */
-    font-size: 0.85rem;
-    font-weight: bold;
+    color: #CBD5E1; 
+    font-size: 0.9rem;
+    font-weight: 500;
     margin-bottom: 0.4rem;
 }}
-.movie-cast {{
+.movie-cast, .movie-overview {{
     display: none;
 }}
 .genre-tag {{
-    color: #fff;
+    color: #CBD5E1;
     font-size: 0.75rem;
     margin-right: 0.3rem;
 }}
 .genre-tag::after {{
     content: ' •';
-    color: #646464;
+    color: rgba(255,255,255,0.2);
     margin-left: 0.3rem;
 }}
 .genre-tag:last-child::after {{
     content: '';
-}}
-.movie-overview {{
-    display: none;
 }}
 .trailer-btn {{
     display: inline-flex;
     align-items: center;
     justify-content: center;
     margin-top: 0.5rem;
-    background: white;
-    color: black !important;
+    background: rgba(255,255,255,0.1);
+    color: #FFFFFF !important;
+    border: 1px solid rgba(255,255,255,0.2);
     padding: 0.4rem 1rem;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 0.8rem;
-    font-weight: bold;
+    font-weight: 700;
     text-decoration: none !important;
     width: 100%;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
 }}
 .trailer-btn:hover {{
-    background: #e6e6e6;
+    background: #FF1E1E;
+    border-color: #FF1E1E;
 }}
 
 /* Headers */
 .results-header {{
-    color: #e5e5e5;
-    font-size: 1.6rem;
-    font-weight: bold;
+    color: #FFFFFF;
+    font-size: 2rem;
+    font-weight: 800;
     padding: 2rem 4rem 0.5rem 4rem;
 }}
 .results-sub {{
-    display: none;
+    color: #CBD5E1;
+    font-size: 1.1rem;
+    padding: 0 4rem 2rem 4rem;
 }}
 
 /* Poster Styling */
 .poster-img {{
     width: 100%;
-    border-radius: 4px;
+    height: 100%;
+    object-fit: cover;
     display: block;
 }}
 .no-poster {{
-    background: #222;
-    height: 300px;
-    border-radius: 4px;
+    background: #0F172A;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #666;
-    font-weight: bold;
+    color: #CBD5E1;
+    font-weight: 500;
 }}
 
 /* Custom st.columns padding */
 div[data-testid="column"] {{
     padding: 0.25rem;
 }}
-div[data-testid="stSpinner"] {{ color: white !important; }}
+div[data-testid="stSpinner"] {{ color: #FF1E1E !important; }}
 div, span, p, label {{ color: inherit; }}
 </style>
 """, unsafe_allow_html=True)
@@ -381,31 +406,38 @@ div, span, p, label {{ color: inherit; }}
 st.markdown("""
 <div class="nav-header">
     <div class="nav-logo">NEXTWATCH.AI</div>
+    <div class="nav-icons">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+    </div>
 </div>
-<div style="height: 10vh;"></div>
-<div style="text-align: center; max-width: 800px; margin: 0 auto; padding: 2rem;">
-    <h1 style="font-size: 3.5rem; font-weight: 900; color: white; margin-bottom: 1rem; line-height: 1.2;">Discover your next cinematic obsession.</h1>
-    <p style="font-size: 1.5rem; color: white; margin-bottom: 2rem; font-weight: 500;">Powered by AI. Discover hidden gems instantly.</p>
-    <p style="font-size: 1.2rem; color: white; margin-bottom: 1.5rem;">Ready to watch? Search for a movie to get recommendations.</p>
+<div style="height: 15vh;"></div>
+<div style="text-align: center; max-width: 900px; margin: 0 auto; padding: 2rem; position: relative; z-index: 2;">
+    <h1 style="font-size: 4.5rem; font-weight: 800; color: #FFFFFF; margin-bottom: 1rem; line-height: 1.1; text-shadow: 0 4px 20px rgba(0,0,0,0.5);">Discover your next cinematic obsession.</h1>
+    <p style="font-size: 1.5rem; color: #CBD5E1; margin-bottom: 2rem; font-weight: 500;">Powered by AI. Discover hidden gems instantly.</p>
+    <p style="font-size: 1.2rem; color: #CBD5E1; margin-bottom: 1.5rem;">Ready to watch? Search for a movie to get recommendations.</p>
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div style="max-width: 800px; margin: 0 auto;">', unsafe_allow_html=True)
+st.markdown('<div class="search-container">', unsafe_allow_html=True)
 search_col, btn_col = st.columns([7, 3])
 with search_col:
     selected_movie = st.selectbox("Email address", movies['title'].values, label_visibility="collapsed")
 with btn_col:
     search_clicked = st.button("Get Started >")
 st.markdown('</div>', unsafe_allow_html=True)
-st.markdown('<div style="height: 12vh;"></div>', unsafe_allow_html=True)
+st.markdown('<div style="height: 15vh;"></div>', unsafe_allow_html=True)
 
 # -------------------- TRENDING --------------------
 trending = fetch_trending()
 if trending:
     st.markdown("""
-    <div style='padding: 2rem 4rem 1rem 4rem; border-top: 1px solid #1a1a1a;'>
-        <div style='color:white; font-size:1.3rem; font-weight:700; margin-bottom:0.3rem'>Trending This Week</div>
-        <div style='color:#666; font-size:0.85rem; margin-bottom:1.5rem'>Most popular movies right now</div>
+    <div style='padding: 2rem 4rem 1rem 4rem;'>
+        <div style='color:#FFFFFF; font-size:2rem; font-weight:800; margin-bottom:0.3rem'>Trending This Week</div>
+        <div style='color:#CBD5E1; font-size:1.1rem; margin-bottom:1.5rem; font-weight:500;'>Most popular movies right now</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -443,7 +475,7 @@ if search_clicked:
 
     st.markdown(f"""
     <div class="results-header">Recommended for you</div>
-    <div class="results-sub">Because you liked <strong style="color:white">{selected_movie}</strong></div>
+    <div class="results-sub">Because you liked <strong style="color:#FFFFFF">{selected_movie}</strong></div>
     """, unsafe_allow_html=True)
 
     slider_html = '''<div class="slider-wrapper">
