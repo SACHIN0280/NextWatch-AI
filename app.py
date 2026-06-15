@@ -281,10 +281,12 @@ div[data-testid="stButton"] button:hover {{
     color: #FF1E1E;
 }}
 .left-btn {{
-    left: 2rem;
+    left: 0;
+    border-radius: 0 8px 8px 0;
 }}
 .right-btn {{
-    right: 2rem;
+    right: 0;
+    border-radius: 8px 0 0 8px;
 }}
 
 /* Movie Card Wrappers */
