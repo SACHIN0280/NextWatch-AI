@@ -486,11 +486,9 @@ if "movie_id" in query_params:
         """<script>
         try {
             const doc = window.parent.document;
-            const main = doc.querySelector('.main') || doc.querySelector('.stApp');
-            if (main) {
-                main.scrollTo({top: 0, behavior: 'instant'});
-            }
-            window.parent.scrollTo({top: 0, behavior: 'instant'});
+            const containers = doc.querySelectorAll('.main, .stApp, [data-testid="stAppViewContainer"], [data-testid="stAppViewBlockContainer"]');
+            containers.forEach(c => { c.scrollTop = 0; });
+            window.parent.scrollTo(0, 0);
         } catch (e) {
             console.log("Scroll failed", e);
         }

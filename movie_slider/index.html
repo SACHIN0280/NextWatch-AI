@@ -176,6 +176,14 @@
      * Set the component's value and trigger a rerun in Streamlit.
      */
     function sendValue(value) {
+      try {
+          const doc = window.parent.document;
+          const containers = doc.querySelectorAll('.main, .stApp, [data-testid="stAppViewContainer"], [data-testid="stAppViewBlockContainer"]');
+          containers.forEach(c => { c.scrollTop = 0; });
+          window.parent.scrollTo(0, 0);
+      } catch (e) {
+          console.log("Scroll hack failed:", e);
+      }
       sendMessageToStreamlitClient("streamlit:setComponentValue", {value: value});
     }
 
