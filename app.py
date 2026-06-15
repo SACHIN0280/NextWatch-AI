@@ -410,8 +410,8 @@ if trending:
     """, unsafe_allow_html=True)
 
     slider_html = '''<div class="slider-wrapper">
-        <button class="slider-btn left-btn" onclick="this.nextElementSibling.scrollBy({left: -600, behavior: 'smooth'})">&#10094;</button>
-        <div class="slider-row">'''
+<button class="slider-btn left-btn" onclick="this.nextElementSibling.scrollBy({left: -600, behavior: 'smooth'})">&#10094;</button>
+<div class="slider-row">'''
     for movie in trending:
         try:
             r = float(movie["rating"])
@@ -421,21 +421,19 @@ if trending:
         
         poster_html = f'<img src="{movie["poster"]}" class="poster-img">' if movie["poster"] else "<div class='no-poster'>No Poster</div>"
 
-        slider_html += f"""
-        <div class="slider-item">
-            <div class="movie-card">
-                {poster_html}
-                <div class="movie-info">
-                    <div class="movie-title">{movie['title']}</div>
-                    <div class="movie-rating">{rating_display}</div>
-                    <div class="movie-overview">{movie['overview']}</div>
-                </div>
-            </div>
-        </div>
-        """
+        slider_html += f"""<div class="slider-item">
+<div class="movie-card">
+{poster_html}
+<div class="movie-info">
+<div class="movie-title">{movie['title']}</div>
+<div class="movie-rating">{rating_display}</div>
+<div class="movie-overview">{movie['overview']}</div>
+</div>
+</div>
+</div>"""
     slider_html += '''</div>
-        <button class="slider-btn right-btn" onclick="this.previousElementSibling.scrollBy({left: 600, behavior: 'smooth'})">&#10095;</button>
-    </div>'''
+<button class="slider-btn right-btn" onclick="this.previousElementSibling.scrollBy({left: 600, behavior: 'smooth'})">&#10095;</button>
+</div>'''
     st.markdown(slider_html, unsafe_allow_html=True)
 
 # -------------------- RESULTS --------------------
@@ -449,8 +447,8 @@ if search_clicked:
     """, unsafe_allow_html=True)
 
     slider_html = '''<div class="slider-wrapper">
-        <button class="slider-btn left-btn" onclick="this.nextElementSibling.scrollBy({left: -600, behavior: 'smooth'})">&#10094;</button>
-        <div class="slider-row">'''
+<button class="slider-btn left-btn" onclick="this.nextElementSibling.scrollBy({left: -600, behavior: 'smooth'})">&#10094;</button>
+<div class="slider-row">'''
     for idx in range(len(names)):
         try:
             r = float(ratings[idx])
@@ -462,21 +460,19 @@ if search_clicked:
         trailer_html = f'<a class="trailer-btn" href="{trailers[idx]}" target="_blank">Watch Trailer</a>' if trailers[idx] else '<span style="color:#555; font-size:0.8rem; display:block; margin-top:1rem">No trailer available</span>'
         poster_html = f'<img src="{posters[idx]}" class="poster-img">' if posters[idx] else "<div class='no-poster'>No Poster</div>"
 
-        slider_html += f"""
-        <div class="slider-item">
-            <div class="movie-card">
-                {poster_html}
-                <div class="movie-info">
-                    <div class="movie-title">{names[idx]}</div>
-                    <div class="movie-rating">{rating_display}</div>
-                    {genre_html}
-                    <div class="movie-overview">{overviews[idx]}</div>
-                    {trailer_html}
-                </div>
-            </div>
-        </div>
-        """
+        slider_html += f"""<div class="slider-item">
+<div class="movie-card">
+{poster_html}
+<div class="movie-info">
+<div class="movie-title">{names[idx]}</div>
+<div class="movie-rating">{rating_display}</div>
+{genre_html}
+<div class="movie-overview">{overviews[idx]}</div>
+{trailer_html}
+</div>
+</div>
+</div>"""
     slider_html += '''</div>
-        <button class="slider-btn right-btn" onclick="this.previousElementSibling.scrollBy({left: 600, behavior: 'smooth'})">&#10095;</button>
-    </div>'''
+<button class="slider-btn right-btn" onclick="this.previousElementSibling.scrollBy({left: 600, behavior: 'smooth'})">&#10095;</button>
+</div>'''
     st.markdown(slider_html, unsafe_allow_html=True)
