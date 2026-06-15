@@ -4,6 +4,7 @@ import pandas as pd
 import requests
 import os
 import urllib.request
+import base64
 from concurrent.futures import ThreadPoolExecutor
 
 # -------------------- CONFIG --------------------
@@ -25,6 +26,14 @@ def load_data():
 
 movies_dict, similarity = load_data()
 movies = pd.DataFrame(movies_dict)
+
+def get_base64_image(image_path):
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    return ""
+
+bg_base64 = get_base64_image("bg_collage.png")
 
 # -------------------- FETCH FUNCTIONS --------------------
 def fetch_movie_details(movie_id):
@@ -104,55 +113,72 @@ def recommend(movie):
 st.set_page_config(page_title="NextWatch.AI", page_icon="🎬", layout="wide")
 
 # -------------------- CSS --------------------
-st.markdown("""
+st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300;400;500;700&display=swap');
 
-* { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important; }
-.stApp { 
+* {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important; }}
+.stApp {{ 
     background: #141414 !important; 
     color: #e5e5e5 !important;
-}
+    z-index: 0;
+}}
+.stApp::before {{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 75vh;
+    background: linear-gradient(to top, #141414 0%, rgba(20,20,20,0.2) 50%, rgba(20,20,20,0.8) 100%), 
+                linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%), 
+                url("data:image/png;base64,{bg_base64}") no-repeat center center / cover;
+    z-index: -1;
+    border-bottom: 8px solid #222;
+}}
 
 /* Custom Scrollbar */
-::-webkit-scrollbar {
+::-webkit-scrollbar {{
     width: 10px;
-}
-::-webkit-scrollbar-track {
+}}
+::-webkit-scrollbar-track {{
     background: #141414; 
-}
-::-webkit-scrollbar-thumb {
+}}
+::-webkit-scrollbar-thumb {{
     background: #333; 
     border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
+}}
+::-webkit-scrollbar-thumb:hover {{
     background: #52525b; 
-}
+}}
 
-.block-container { padding: 0 !important; max-width: 100% !important; }
+.block-container {{ padding: 0 !important; max-width: 100% !important; margin-top: -6rem; }}
 
-/* Hero Section */
-.hero {
-    background: linear-gradient(to right, rgba(20,20,20,0.9) 0%, rgba(20,20,20,0.4) 100%), url('https://assets.nflxext.com/ffe/siteui/vlv3/9d3533b2-0e2b-40b2-95e0-eca797975213/f6f5712e-1338-40da-9e8c-8f921d7b1b5e/US-en-20240311-popsignuptwoweeks-perspective_alpha_website_large.jpg') no-repeat center center / cover;
-    padding: 10rem 4rem 10rem 4rem;
-    text-align: left;
-    border-bottom: 8px solid #222;
-}
-.hero-title {
-    font-size: 4rem;
-    font-weight: 900;
+/* Nav Header */
+.nav-header {{
+    position: relative;
+    width: 100%;
+    padding: 2rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}}
+.nav-logo {{
     color: #E50914;
+    font-size: 2.5rem;
+    font-weight: 900;
     letter-spacing: -1px;
-    margin-bottom: 0.5rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-}
-.hero-sub {
-    color: #fff;
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin-bottom: 2.5rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-}
+}}
+.nav-signin {{
+    background: #E50914;
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 4px;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 0.9rem;
+}}
 
 /* Selectbox */
 div[data-testid="stSelectbox"] > div {
@@ -301,25 +327,28 @@ div, span, p, label { color: inherit; }
 </style>
 """, unsafe_allow_html=True)
 
-# -------------------- HERO --------------------
+# -------------------- HERO & SEARCH --------------------
 st.markdown("""
-<div class="hero">
-    <div class="hero-title">NEXTWATCH.AI</div>
-    <div class="hero-sub">Discover your next favorite movie</div>
+<div class="nav-header">
+    <div class="nav-logo">NEXTWATCH.AI</div>
+    <a href="#" class="nav-signin">Sign In</a>
+</div>
+<div style="height: 10vh;"></div>
+<div style="text-align: center; max-width: 800px; margin: 0 auto; padding: 2rem;">
+    <h1 style="font-size: 3.5rem; font-weight: 900; color: white; margin-bottom: 1rem; line-height: 1.2;">Unlimited movies, TV shows and more.</h1>
+    <p style="font-size: 1.5rem; color: white; margin-bottom: 2rem; font-weight: 500;">Starts at ₹149. Cancel anytime.</p>
+    <p style="font-size: 1.2rem; color: white; margin-bottom: 1.5rem;">Ready to watch? Search for a movie to get recommendations.</p>
 </div>
 """, unsafe_allow_html=True)
 
-# -------------------- SEARCH --------------------
-st.markdown('<div style="padding: 2rem 4rem;">', unsafe_allow_html=True)
-col_left, col_center, col_right = st.columns([1, 3, 1])
-with col_center:
-    search_col, btn_col = st.columns([5, 1])
-    with search_col:
-        selected_movie = st.selectbox("", movies['title'].values)
-    with btn_col:
-        st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
-        search_clicked = st.button("Search")
+st.markdown('<div style="max-width: 800px; margin: 0 auto;">', unsafe_allow_html=True)
+search_col, btn_col = st.columns([7, 3])
+with search_col:
+    selected_movie = st.selectbox("Email address", movies['title'].values, label_visibility="collapsed")
+with btn_col:
+    search_clicked = st.button("Get Started >")
 st.markdown('</div>', unsafe_allow_html=True)
+st.markdown('<div style="height: 12vh;"></div>', unsafe_allow_html=True)
 
 # -------------------- TRENDING --------------------
 trending = fetch_trending()
