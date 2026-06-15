@@ -106,24 +106,23 @@ st.set_page_config(page_title="NextWatch.AI", page_icon="🎬", layout="wide")
 # -------------------- CSS --------------------
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300;400;500;700&display=swap');
 
-* { font-family: 'Outfit', sans-serif !important; }
+* { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important; }
 .stApp { 
-    background: #09090b !important; 
-    color: #ededed !important;
+    background: #141414 !important; 
+    color: #e5e5e5 !important;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
 }
 ::-webkit-scrollbar-track {
-    background: #09090b; 
+    background: #141414; 
 }
 ::-webkit-scrollbar-thumb {
-    background: #3f3f46; 
+    background: #333; 
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -134,216 +133,168 @@ st.markdown("""
 
 /* Hero Section */
 .hero {
-    background: radial-gradient(circle at top, #2e0814 0%, #09090b 70%);
-    padding: 6rem 2rem 4rem 2rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-.hero::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle at 50% 50%, rgba(229, 9, 20, 0.15), transparent 50%);
-    z-index: 0;
-    pointer-events: none;
+    background: linear-gradient(to right, rgba(20,20,20,0.9) 0%, rgba(20,20,20,0.4) 100%), url('https://assets.nflxext.com/ffe/siteui/vlv3/9d3533b2-0e2b-40b2-95e0-eca797975213/f6f5712e-1338-40da-9e8c-8f921d7b1b5e/US-en-20240311-popsignuptwoweeks-perspective_alpha_website_large.jpg') no-repeat center center / cover;
+    padding: 10rem 4rem 10rem 4rem;
+    text-align: left;
+    border-bottom: 8px solid #222;
 }
 .hero-title {
-    position: relative;
-    font-size: 5rem;
-    font-weight: 800;
-    background: linear-gradient(to right, #ff2e43, #e50914);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: 4rem;
+    font-weight: 900;
+    color: #E50914;
     letter-spacing: -1px;
     margin-bottom: 0.5rem;
-    z-index: 1;
-    animation: fadeInDown 0.8s ease-out;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 .hero-sub {
-    position: relative;
-    color: #a1a1aa;
-    font-size: 1.2rem;
-    letter-spacing: 1px;
-    font-weight: 300;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 500;
     margin-bottom: 2.5rem;
-    z-index: 1;
-    animation: fadeInUp 0.8s ease-out 0.2s backwards;
-}
-
-@keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 
 /* Selectbox */
 div[data-testid="stSelectbox"] > div {
-    background-color: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 12px !important;
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    border: 1px solid #333 !important;
+    border-radius: 4px !important;
     color: white !important;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-}
-div[data-testid="stSelectbox"] > div:hover {
-    border-color: rgba(229, 9, 20, 0.5) !important;
-    background-color: rgba(255, 255, 255, 0.05) !important;
 }
 div[data-testid="stSelectbox"] label { display: none !important; }
 
 /* Buttons */
 div[data-testid="stButton"] button {
-    background: rgba(255, 255, 255, 0.05) !important;
+    background: #e50914 !important;
     color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 12px !important;
-    font-weight: 600 !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    height: 45px !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-weight: bold !important;
+    font-size: 1.1rem !important;
+    height: 48px !important;
+    transition: background 0.2s ease !important;
 }
 div[data-testid="stButton"] button:hover {
-    background: #e50914 !important;
-    border-color: #e50914 !important;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
+    background: #f40612 !important;
 }
 
 /* Movie Card Wrappers */
 .movie-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    padding: 0.8rem;
-    transition: all 0.4s ease;
-    height: 100%;
+    position: relative;
+    background: #141414;
+    border-radius: 4px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    z-index: 1;
 }
 .movie-card:hover {
-    transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    transform: scale(1.15) translateY(-10px);
+    z-index: 100;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+    border-radius: 4px;
 }
 
 /* Movie Info */
 .movie-info { 
-    padding: 1rem 0.5rem; 
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1.5rem 1rem 1rem 1rem;
+    background: linear-gradient(to top, rgba(20,20,20,1) 0%, rgba(20,20,20,0.8) 60%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
+.movie-card:hover .movie-info {
+    opacity: 1;
+}
+
 .movie-title {
     color: #fff;
-    font-weight: 600;
-    font-size: 1.1rem;
-    margin-bottom: 0.4rem;
-    line-height: 1.3;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .movie-rating {
-    color: #fbbf24;
+    color: #46d369; /* Netflix Match Green */
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: bold;
     margin-bottom: 0.4rem;
-    display: flex;
-    align-items: center;
-    gap: 4px;
 }
 .movie-cast {
-    color: #a1a1aa;
-    font-size: 0.75rem;
-    margin-bottom: 0.6rem;
-    line-height: 1.4;
+    display: none;
 }
 .genre-tag {
-    display: inline-block;
-    background: rgba(229, 9, 20, 0.1);
-    border: 1px solid rgba(229, 9, 20, 0.2);
-    color: #ff8a8a;
-    padding: 0.2rem 0.6rem;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    margin: 0.15rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
+    color: #fff;
+    font-size: 0.75rem;
+    margin-right: 0.3rem;
 }
-.genre-tag:hover {
-    background: rgba(229, 9, 20, 0.2);
+.genre-tag::after {
+    content: ' •';
+    color: #646464;
+    margin-left: 0.3rem;
+}
+.genre-tag:last-child::after {
+    content: '';
 }
 .movie-overview {
-    color: #8f8f9d;
-    font-size: 0.8rem;
-    line-height: 1.6;
-    margin-top: 0.8rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    display: none;
 }
 .trailer-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-top: 1rem;
-    background: linear-gradient(135deg, #e50914, #b20710);
-    color: white !important;
-    padding: 0.5rem 1.2rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    margin-top: 0.5rem;
+    background: white;
+    color: black !important;
+    padding: 0.4rem 1rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
     text-decoration: none !important;
     width: 100%;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3);
+    transition: background 0.2s;
 }
 .trailer-btn:hover {
-    transform: scale(1.02);
-    box-shadow: 0 6px 20px rgba(229, 9, 20, 0.5);
+    background: #e6e6e6;
 }
 
 /* Headers */
 .results-header {
-    color: white;
-    font-size: 1.8rem;
-    font-weight: 800;
-    padding: 2.5rem 4rem 0.3rem 4rem;
-    letter-spacing: -0.5px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    color: #e5e5e5;
+    font-size: 1.6rem;
+    font-weight: bold;
+    padding: 2rem 4rem 0.5rem 4rem;
 }
 .results-sub {
-    color: #a1a1aa;
-    font-size: 0.95rem;
-    padding: 0 4rem 1.5rem 4rem;
+    display: none;
 }
 
 /* Poster Styling */
 .poster-img {
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-    transition: transform 0.4s ease;
     width: 100%;
-}
-.movie-card:hover .poster-img {
-    transform: scale(1.03);
+    border-radius: 4px;
+    display: block;
 }
 .no-poster {
-    background: linear-gradient(135deg, #18181b, #27272a);
+    background: #222;
     height: 300px;
-    border-radius: 12px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #52525b;
-    font-weight: 600;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    color: #666;
+    font-weight: bold;
 }
 
 /* Custom st.columns padding */
 div[data-testid="column"] {
-    padding: 0.5rem;
+    padding: 0.25rem;
 }
 div[data-testid="stSpinner"] { color: white !important; }
 div, span, p, label { color: inherit; }
@@ -387,7 +338,7 @@ if trending:
         with col:
             try:
                 r = float(movie["rating"])
-                rating_display = f"&#11088; {r:.1f}/10"
+                rating_display = f"{int(r * 10)}% Match"
             except:
                 rating_display = "N/A"
             
@@ -411,7 +362,7 @@ if trending:
         with col:
             try:
                 r = float(movie["rating"])
-                rating_display = f"&#11088; {r:.1f}/10"
+                rating_display = f"{int(r * 10)}% Match"
             except:
                 rating_display = "N/A"
             
@@ -446,8 +397,7 @@ if search_clicked:
         with col:
             try:
                 r = float(ratings[idx])
-                stars = "&#11088;" * round(r / 2)
-                rating_display = f"{r:.1f}/10 {stars}"
+                rating_display = f"{int(r * 10)}% Match"
             except:
                 rating_display = "N/A"
 
