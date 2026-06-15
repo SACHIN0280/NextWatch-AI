@@ -305,10 +305,14 @@ div[data-testid="stButton"] button:hover {{
     bottom: 0;
     left: 0;
     width: 100%;
+    height: 100%;
     padding: 2rem 1rem 1rem 1rem;
-    background: linear-gradient(to top, #05070D 0%, rgba(5,7,13,0.8) 50%, transparent 100%);
+    background: linear-gradient(to top, rgba(5,7,13,1) 0%, rgba(5,7,13,0.9) 60%, transparent 100%);
     opacity: 0;
     transition: opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }}
 .movie-card:hover .movie-info {{
     opacity: 1;
@@ -324,13 +328,22 @@ div[data-testid="stButton"] button:hover {{
     text-overflow: ellipsis;
 }}
 .movie-rating {{
-    color: #CBD5E1; 
+    color: #46d369; 
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 700;
     margin-bottom: 0.4rem;
 }}
-.movie-cast, .movie-overview {{
+.movie-cast {{
     display: none;
+}}
+.movie-overview {{
+    color: #CBD5E1;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }}
 .genre-tag {{
     color: #CBD5E1;
