@@ -522,6 +522,8 @@ with btn_col:
     search_clicked = st.button("Get Started >")
 st.markdown('<div style="height: 15vh;"></div>', unsafe_allow_html=True)
 
+MovieSlider = components.declare_component("movie_slider", path="movie_slider")
+
 # -------------------- TRENDING --------------------
 trending = fetch_trending()
 if trending:
@@ -532,42 +534,17 @@ if trending:
     </div>
     """, unsafe_allow_html=True)
 
-    slider_html = "<html><head>" + custom_css + """
-<style>
-body { background: transparent; margin: 0; padding: 0; overflow: hidden; }
-</style>
-</head>
-<body>
-<div class="slider-wrapper">
-<button class="slider-btn left-btn" onclick="this.nextElementSibling.scrollBy({left: -600, behavior: 'smooth'})">&#10094;</button>
-<div class="slider-row">"""
-    for movie in trending:
+    for m in trending:
         try:
-            r = float(movie["rating"])
-            rating_display = f"{int(r * 10)}% Match"
+            r = float(m["rating"])
+            m["rating"] = f"{int(r * 10)}% Match"
         except:
-            rating_display = "N/A"
-        
-        poster_html = f'<img src="{movie["poster"]}" class="poster-img">' if movie["poster"] else "<div class='no-poster'>No Poster</div>"
-
-        slider_html += f"""<div class="slider-item">
-<a href="?movie_id={movie['id']}" target="_blank" style="text-decoration:none; color:inherit; display:block; height:100%;">
-<div class="movie-card">
-{poster_html}
-<div class="movie-info">
-<div class="movie-title">{movie['title']}</div>
-<div class="movie-rating">{rating_display}</div>
-<div class="movie-overview">{movie['overview']}</div>
-</div>
-</div>
-</a>
-</div>"""
-    slider_html += '''</div>
-<button class="slider-btn right-btn" onclick="this.previousElementSibling.scrollBy({left: 600, behavior: 'smooth'})">&#10095;</button>
-</div>
-</body>
-</html>'''
-    components.html(slider_html, height=450, scrolling=False)
+            m["rating"] = "N/A"
+            
+    clicked_trend = MovieSlider(movies=trending, mode="slider", key="trending_slider")
+    if clicked_trend:
+        st.query_params["movie_id"] = clicked_trend
+        st.rerun()
 
 # -------------------- RESULTS --------------------
 if search_clicked:
@@ -579,8 +556,7 @@ if search_clicked:
     <div class="results-sub">Because you liked <strong style="color:#FFFFFF">{selected_movie}</strong></div>
     """, unsafe_allow_html=True)
 
-    slider_html = '''<div class="slider-wrapper">
-<div class="slider-row center-row">'''
+    results_data = []
     for idx in range(len(names)):
         try:
             r = float(ratings[idx])
@@ -588,22 +564,16 @@ if search_clicked:
         except:
             rating_display = "N/A"
 
-        genre_html = "".join([f'<span class="genre-tag">{g}</span>' for g in genres[idx]])
-        poster_html = f'<img src="{posters[idx]}" class="poster-img">' if posters[idx] else "<div class='no-poster'>No Poster</div>"
+        results_data.append({
+            "id": str(movie_ids[idx]),
+            "title": names[idx],
+            "poster": posters[idx],
+            "rating": rating_display,
+            "overview": overviews[idx],
+            "genres": genres[idx]
+        })
 
-        slider_html += f"""<div class="slider-item">
-<a href="?movie_id={movie_ids[idx]}" target="_blank" style="text-decoration:none; color:inherit; display:block; height:100%;">
-<div class="movie-card">
-{poster_html}
-<div class="movie-info">
-<div class="movie-title">{names[idx]}</div>
-<div class="movie-rating">{rating_display}</div>
-{genre_html}
-<div class="movie-overview">{overviews[idx]}</div>
-</div>
-</div>
-</a>
-</div>"""
-    slider_html += '''</div>
-</div>'''
-    st.markdown(slider_html, unsafe_allow_html=True)
+    clicked_res = MovieSlider(movies=results_data, mode="grid", key="results_slider")
+    if clicked_res:
+        st.query_params["movie_id"] = clicked_res
+        st.rerun()
