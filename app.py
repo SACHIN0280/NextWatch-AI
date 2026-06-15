@@ -132,6 +132,20 @@ def recommend(movie):
 # -------------------- PAGE CONFIG --------------------
 st.set_page_config(page_title="NextWatch.AI", page_icon="🎬", layout="wide")
 
+# -------------------- NAV HTML --------------------
+NAV_HTML = """
+<div class="nav-header">
+    <div class="nav-logo">NEXTWATCH.AI</div>
+    <div class="nav-icons">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+    </div>
+</div>
+"""
+
 # -------------------- CSS --------------------
 custom_css = f"""
 <style>
@@ -468,10 +482,13 @@ if "movie_id" in query_params:
     movie_id = query_params["movie_id"]
     title, poster, backdrop, rating, overview, genres, trailer = fetch_full_movie_details(movie_id)
     
-    st.markdown('<div style="height: 2rem;"></div>', unsafe_allow_html=True)
-    if st.button("❮ Back to Home", key="back_btn"):
-        del st.query_params["movie_id"]
-        st.rerun()
+    st.markdown(NAV_HTML, unsafe_allow_html=True)
+    
+    b_col1, b_col2 = st.columns([2, 10])
+    with b_col1:
+        if st.button("❮ Back to Home", key="back_btn"):
+            del st.query_params["movie_id"]
+            st.rerun()
         
     bg_img = backdrop if backdrop else (poster if poster else "")
     st.markdown(f"""
@@ -496,17 +513,8 @@ if "movie_id" in query_params:
     st.stop() # Halt execution so the home page does not render
 
 # -------------------- HERO & SEARCH --------------------
+st.markdown(NAV_HTML, unsafe_allow_html=True)
 st.markdown("""
-<div class="nav-header">
-    <div class="nav-logo">NEXTWATCH.AI</div>
-    <div class="nav-icons">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
-    </div>
-</div>
 <div style="height: 15vh;"></div>
 <div style="text-align: center; max-width: 900px; margin: 0 auto; padding: 2rem; position: relative; z-index: 2;">
     <h1 style="font-size: 4.5rem; font-weight: 800; color: #FFFFFF; margin-bottom: 1rem; line-height: 1.1; text-shadow: 0 4px 20px rgba(0,0,0,0.5);">Discover your next cinematic obsession.</h1>
