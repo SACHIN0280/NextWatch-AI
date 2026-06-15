@@ -5,6 +5,7 @@ import requests
 import os
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
+import streamlit.components.v1 as components
 
 # -------------------- CONFIG --------------------
 API_KEY = "21dc30dc0e6b7c30e8abc1fd5aaca6e8"
@@ -104,7 +105,7 @@ def recommend(movie):
 st.set_page_config(page_title="NextWatch.AI", page_icon="🎬", layout="wide")
 
 # -------------------- CSS --------------------
-st.markdown(f"""
+custom_css = f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
 
@@ -428,7 +429,8 @@ div[data-testid="column"] {{
 div[data-testid="stSpinner"] {{ color: #FF1E1E !important; }}
 div, span, p, label {{ color: inherit; }}
 </style>
-""", unsafe_allow_html=True)
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
 
 # -------------------- HERO & SEARCH --------------------
 st.markdown("""
@@ -467,9 +469,15 @@ if trending:
     </div>
     """, unsafe_allow_html=True)
 
-    slider_html = '''<div class="slider-wrapper">
+    slider_html = "<html><head>" + custom_css + """
+<style>
+body { background: transparent; margin: 0; padding: 0; overflow: hidden; }
+</style>
+</head>
+<body>
+<div class="slider-wrapper">
 <button class="slider-btn left-btn" onclick="this.nextElementSibling.scrollBy({left: -600, behavior: 'smooth'})">&#10094;</button>
-<div class="slider-row">'''
+<div class="slider-row">"""
     for movie in trending:
         try:
             r = float(movie["rating"])
@@ -491,8 +499,10 @@ if trending:
 </div>"""
     slider_html += '''</div>
 <button class="slider-btn right-btn" onclick="this.previousElementSibling.scrollBy({left: 600, behavior: 'smooth'})">&#10095;</button>
-</div>'''
-    st.markdown(slider_html, unsafe_allow_html=True)
+</div>
+</body>
+</html>'''
+    components.html(slider_html, height=450, scrolling=False)
 
 # -------------------- RESULTS --------------------
 if search_clicked:
