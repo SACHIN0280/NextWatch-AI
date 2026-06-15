@@ -88,6 +88,7 @@ def fetch_full_movie_details(movie_id):
         
         r = data.get('vote_average', 0)
         rating = f"{int(float(r) * 10)}%" if r else "N/A"
+        overall_rating = f"{round(float(r), 1)}/10" if r else "N/A"
         
         overview = data.get('overview', 'No description available.')
         genres = [g['name'] for g in data.get('genres', [])]
@@ -111,9 +112,9 @@ def fetch_full_movie_details(movie_id):
                 "rating": r.get("author_details", {}).get("rating")
             })
                 
-        return title, poster, backdrop, rating, overview, genres, trailer, reviews
+        return title, poster, backdrop, rating, overall_rating, overview, genres, trailer, reviews
     except Exception:
-        return 'Unknown', None, None, 'N/A', 'No description available.', [], None, []
+        return 'Unknown', None, None, 'N/A', 'N/A', 'No description available.', [], None, []
 
 # -------------------- RECOMMEND --------------------
 def recommend(movie):
@@ -482,7 +483,7 @@ st.markdown(custom_css, unsafe_allow_html=True)
 query_params = st.query_params
 if "movie_id" in query_params:
     movie_id = query_params["movie_id"]
-    title, poster, backdrop, rating, overview, genres, trailer, reviews = fetch_full_movie_details(movie_id)
+    title, poster, backdrop, rating, overall_rating, overview, genres, trailer, reviews = fetch_full_movie_details(movie_id)
     
     components.html(
         """<script>
@@ -523,7 +524,7 @@ if "movie_id" in query_params:
         <img src="{poster}" style="border-radius: 16px; width: 350px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1);">
         <div style="flex: 1; min-width: 300px; padding-top: 1rem;">
             <h1 style="font-size: 4rem; font-weight:800; margin-bottom: 0.5rem; line-height: 1.1; color: #FFFFFF; text-shadow: 0 4px 20px rgba(0,0,0,0.5);">{title}</h1>
-            <div style="color: #46d369; font-size: 1.2rem; font-weight:700; margin-bottom: 1rem;">{rating} Match</div>
+            <div style="color: #46d369; font-size: 1.2rem; font-weight:700; margin-bottom: 1rem;">{rating} Match <span style="color: #FFD700; margin-left: 1.5rem; font-size: 1.2rem;">★ {overall_rating} Rating</span></div>
             <div style="margin-bottom: 1.5rem;">{" ".join([f'<span class="genre-tag" style="font-size:1rem;">{g}</span>' for g in genres])}</div>
             <p style="font-size: 1.2rem; line-height: 1.6; color: #CBD5E1; margin-bottom: 2rem; max-width: 800px;">{overview}</p>
             {reviews_html}
