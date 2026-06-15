@@ -237,22 +237,22 @@ div[data-testid="stSelectbox"] > div {{
 div[data-testid="stSelectbox"] label {{ display: none !important; }}
 
 /* Buttons */
-div[data-testid="stButton"] button {{
-    background: #FF1E1E !important;
+div[data-testid="stButton"] button {
+    background: transparent !important;
     color: #FFFFFF !important;
-    border: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
     border-radius: 8px !important;
-    font-weight: 800 !important;
-    font-size: 1.1rem !important;
-    height: 48px !important;
-    box-shadow: 0 0 15px rgba(255, 30, 30, 0.4) !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    height: 40px !important;
+    box-shadow: none !important;
     transition: all 0.3s ease !important;
-}}
-div[data-testid="stButton"] button:hover {{
-    background: #ff3333 !important;
-    box-shadow: 0 0 25px rgba(255, 30, 30, 0.6) !important;
+}
+div[data-testid="stButton"] button:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: #FFFFFF !important;
     transform: translateY(-2px) !important;
-}}
+}
 
 /* Slider Wrapper */
 .slider-wrapper {{
@@ -524,11 +524,13 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-search_col, btn_col = st.columns([7, 3])
+col1, search_col, col3 = st.columns([2, 6, 2])
 with search_col:
-    selected_movie = st.selectbox("Email address", movies['title'].values, label_visibility="collapsed")
-with btn_col:
-    search_clicked = st.button("Get Started >")
+    selected_movie = st.selectbox("Search Movie", movies['title'].values, label_visibility="collapsed")
+    st.markdown('<div style="height: 0.5rem;"></div>', unsafe_allow_html=True)
+    b_col1, b_col2, b_col3 = st.columns([1, 1, 1])
+    with b_col2:
+        search_clicked = st.button("Search Movies", use_container_width=True)
 st.markdown('<div style="height: 15vh;"></div>', unsafe_allow_html=True)
 
 MovieSlider = components.declare_component("movie_slider", path="movie_slider")
