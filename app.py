@@ -111,10 +111,15 @@ def fetch_full_movie_details(movie_id):
                 "content": r.get("content", ""),
                 "rating": r.get("author_details", {}).get("rating")
             })
+        credits_url = f"https://api.themoviedb.org/3/movie/{movie_id}/credits?api_key={API_KEY}&language=en-US"
+        credits_data = requests.get(credits_url, timeout=10).json()
+        cast = [c['name'] for c in credits_data.get('cast', [])[:5]]
+        director = next((c['name'] for c in credits_data.get('crew', []) if c['job'] == 'Director'), 'Unknown')
+        cast_and_crew = {"cast": cast, "director": director}
                 
-        return title, poster, backdrop, rating, overall_rating, overview, genres, trailer, reviews
+        return title, poster, backdrop, rating, overall_rating, overview, genres, trailer, reviews, cast_and_crew
     except Exception:
-        return 'Unknown', None, None, 'N/A', 'N/A', 'No description available.', [], None, []
+        return 'Unknown', None, None, 'N/A', 'N/A', 'No description available.', [], None, [], {}
 
 # -------------------- RECOMMEND --------------------
 def recommend(movie):
@@ -483,7 +488,7 @@ st.markdown(custom_css, unsafe_allow_html=True)
 query_params = st.query_params
 if "movie_id" in query_params:
     movie_id = query_params["movie_id"]
-    title, poster, backdrop, rating, overall_rating, overview, genres, trailer, reviews = fetch_full_movie_details(movie_id)
+    title, poster, backdrop, rating, overall_rating, overview, genres, trailer, reviews, cast_and_crew = fetch_full_movie_details(movie_id)
     
     components.html(
         """<script>
@@ -518,10 +523,22 @@ if "movie_id" in query_params:
             reviews_html += f"<div style='background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;'><div style='font-weight: 700; color: #FFFFFF; margin-bottom: 0.3rem;'>{r['author']}{rating_star}</div><div style='color: #CBD5E1; font-size: 0.95rem; line-height: 1.5;'>{content}</div></div>"
         reviews_html += "</div>"
 
+    cast_html = ""
+    if cast_and_crew:
+        cast_html = f"""
+        <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="color: #CBD5E1; font-size: 0.95rem; margin-bottom: 0.5rem;"><span style="color:#FFFFFF; font-weight:700;">Director:</span> {cast_and_crew['director']}</div>
+            <div style="color: #CBD5E1; font-size: 0.95rem; line-height: 1.4;"><span style="color:#FFFFFF; font-weight:700;">Cast:</span> {', '.join(cast_and_crew['cast'])}</div>
+        </div>
+        """
+
     st.markdown(f"""
     <div style="position: absolute; top:0; left:0; width:100%; height:70vh; background: url('{bg_img}') center/cover; opacity:0.15; z-index:-1; filter:blur(8px); mask-image: linear-gradient(to bottom, black 40%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);"></div>
     <div style="max-width: 1200px; margin: 0 auto; display: flex; gap: 4rem; padding: 2rem 1rem 4rem 1rem; align-items: flex-start; flex-wrap: wrap;">
-        <img src="{poster}" style="border-radius: 16px; width: 350px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1);">
+        <div style="display: flex; flex-direction: column; width: 350px;">
+            <img src="{poster}" style="border-radius: 16px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1);">
+            {cast_html}
+        </div>
         <div style="flex: 1; min-width: 300px; padding-top: 1rem;">
             <h1 style="font-size: 4rem; font-weight:800; margin-bottom: 0.5rem; line-height: 1.1; color: #FFFFFF; text-shadow: 0 4px 20px rgba(0,0,0,0.5);">{title}</h1>
             <div style="color: #46d369; font-size: 1.2rem; font-weight:700; margin-bottom: 1rem;">{rating} Match <span style="color: #FFD700; margin-left: 1.5rem; font-size: 1.2rem;">★ {overall_rating} Rating</span></div>
