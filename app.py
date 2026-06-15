@@ -196,35 +196,61 @@ div[data-testid="stButton"] button:hover {{
 }}
 
 /* Slider Row */
-.slider-container {{
+.slider-wrapper {{
+    position: relative;
     padding: 0 4rem;
     margin-bottom: 2rem;
 }}
 .slider-row {{
     display: flex;
-    gap: 15px;
+    gap: 10px;
     overflow-x: auto;
     padding-bottom: 1.5rem;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }}
 .slider-row::-webkit-scrollbar {{
-    height: 8px;
-}}
-.slider-row::-webkit-scrollbar-track {{
-    background: #141414;
-    border-radius: 4px;
-}}
-.slider-row::-webkit-scrollbar-thumb {{
-    background: #333;
-    border-radius: 4px;
-}}
-.slider-row::-webkit-scrollbar-thumb:hover {{
-    background: #52525b;
+    display: none;
 }}
 .slider-item {{
-    flex: 0 0 220px;
+    flex: 0 0 160px;
     scroll-snap-align: start;
+}}
+.slider-btn {{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    font-size: 2.5rem;
+    padding: 1rem 0.5rem;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s, background 0.3s;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}}
+.slider-wrapper:hover .slider-btn {{
+    opacity: 1;
+}}
+.slider-btn:hover {{
+    background: rgba(0,0,0,0.8);
+}}
+.left-btn {{
+    left: 0;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}}
+.right-btn {{
+    right: 0;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
 }}
 
 /* Movie Card Wrappers */
@@ -383,7 +409,9 @@ if trending:
     </div>
     """, unsafe_allow_html=True)
 
-    slider_html = '<div class="slider-container"><div class="slider-row">'
+    slider_html = '''<div class="slider-wrapper">
+        <button class="slider-btn left-btn" onclick="this.nextElementSibling.scrollBy({left: -600, behavior: 'smooth'})">&#10094;</button>
+        <div class="slider-row">'''
     for movie in trending:
         try:
             r = float(movie["rating"])
@@ -405,7 +433,9 @@ if trending:
             </div>
         </div>
         """
-    slider_html += '</div></div>'
+    slider_html += '''</div>
+        <button class="slider-btn right-btn" onclick="this.previousElementSibling.scrollBy({left: 600, behavior: 'smooth'})">&#10095;</button>
+    </div>'''
     st.markdown(slider_html, unsafe_allow_html=True)
 
 # -------------------- RESULTS --------------------
@@ -418,7 +448,9 @@ if search_clicked:
     <div class="results-sub">Because you liked <strong style="color:white">{selected_movie}</strong></div>
     """, unsafe_allow_html=True)
 
-    slider_html = '<div class="slider-container"><div class="slider-row">'
+    slider_html = '''<div class="slider-wrapper">
+        <button class="slider-btn left-btn" onclick="this.nextElementSibling.scrollBy({left: -600, behavior: 'smooth'})">&#10094;</button>
+        <div class="slider-row">'''
     for idx in range(len(names)):
         try:
             r = float(ratings[idx])
@@ -444,5 +476,7 @@ if search_clicked:
             </div>
         </div>
         """
-    slider_html += '</div></div>'
+    slider_html += '''</div>
+        <button class="slider-btn right-btn" onclick="this.previousElementSibling.scrollBy({left: 600, behavior: 'smooth'})">&#10095;</button>
+    </div>'''
     st.markdown(slider_html, unsafe_allow_html=True)
