@@ -224,11 +224,13 @@ div[data-testid="stButton"] button:hover {{
     transform: translateY(-2px) !important;
 }}
 
-/* Slider Row */
+/* Slider Wrapper */
 .slider-wrapper {{
     position: relative;
-    padding: 0 4rem;
+    padding: 0 1rem;
     margin-bottom: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }}
 .slider-row {{
     display: flex;
@@ -385,12 +387,16 @@ div[data-testid="stButton"] button:hover {{
     color: #FFFFFF;
     font-size: 2rem;
     font-weight: 800;
-    padding: 2rem 4rem 0.5rem 4rem;
+    padding: 2rem 1rem 0.5rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }}
 .results-sub {{
     color: #CBD5E1;
     font-size: 1.1rem;
-    padding: 0 4rem 2rem 4rem;
+    padding: 0 1rem 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }}
 
 /* Poster Styling */
@@ -450,7 +456,7 @@ st.markdown('<div style="height: 15vh;"></div>', unsafe_allow_html=True)
 trending = fetch_trending()
 if trending:
     st.markdown("""
-    <div style='padding: 2rem 4rem 1rem 4rem;'>
+    <div style='max-width: 1200px; margin: 0 auto; padding: 2rem 1rem 1rem 1rem;'>
         <div style='color:#FFFFFF; font-size:2rem; font-weight:800; margin-bottom:0.3rem'>Trending This Week</div>
         <div style='color:#CBD5E1; font-size:1.1rem; margin-bottom:1.5rem; font-weight:500;'>Most popular movies right now</div>
     </div>
