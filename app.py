@@ -525,29 +525,24 @@ if "movie_id" in query_params:
 
     cast_html = ""
     if cast_and_crew:
-        cast_html = f"""
-        <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
-            <div style="color: #CBD5E1; font-size: 0.95rem; margin-bottom: 0.5rem;"><span style="color:#FFFFFF; font-weight:700;">Director:</span> {cast_and_crew['director']}</div>
-            <div style="color: #CBD5E1; font-size: 0.95rem; line-height: 1.4;"><span style="color:#FFFFFF; font-weight:700;">Cast:</span> {', '.join(cast_and_crew['cast'])}</div>
-        </div>
-        """
+        cast_html = f"<div style='margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);'><div style='color: #CBD5E1; font-size: 0.95rem; margin-bottom: 0.5rem;'><span style='color:#FFFFFF; font-weight:700;'>Director:</span> {cast_and_crew['director']}</div><div style='color: #CBD5E1; font-size: 0.95rem; line-height: 1.4;'><span style='color:#FFFFFF; font-weight:700;'>Cast:</span> {', '.join(cast_and_crew['cast'])}</div></div>"
 
     st.markdown(f"""
-    <div style="position: absolute; top:0; left:0; width:100%; height:70vh; background: url('{bg_img}') center/cover; opacity:0.15; z-index:-1; filter:blur(8px); mask-image: linear-gradient(to bottom, black 40%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);"></div>
-    <div style="max-width: 1200px; margin: 0 auto; display: flex; gap: 4rem; padding: 2rem 1rem 4rem 1rem; align-items: flex-start; flex-wrap: wrap;">
-        <div style="display: flex; flex-direction: column; width: 350px;">
-            <img src="{poster}" style="border-radius: 16px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1);">
-            {cast_html}
-        </div>
-        <div style="flex: 1; min-width: 300px; padding-top: 1rem;">
-            <h1 style="font-size: 4rem; font-weight:800; margin-bottom: 0.5rem; line-height: 1.1; color: #FFFFFF; text-shadow: 0 4px 20px rgba(0,0,0,0.5);">{title}</h1>
-            <div style="color: #46d369; font-size: 1.2rem; font-weight:700; margin-bottom: 1rem;">{rating} Match <span style="color: #FFD700; margin-left: 1.5rem; font-size: 1.2rem;">★ {overall_rating} Rating</span></div>
-            <div style="margin-bottom: 1.5rem;">{" ".join([f'<span class="genre-tag" style="font-size:1rem;">{g}</span>' for g in genres])}</div>
-            <p style="font-size: 1.2rem; line-height: 1.6; color: #CBD5E1; margin-bottom: 2rem; max-width: 800px;">{overview}</p>
-            {reviews_html}
-        </div>
+<div style="position: absolute; top:0; left:0; width:100%; height:70vh; background: url('{bg_img}') center/cover; opacity:0.15; z-index:-1; filter:blur(8px); mask-image: linear-gradient(to bottom, black 40%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);"></div>
+<div style="max-width: 1200px; margin: 0 auto; display: flex; gap: 4rem; padding: 2rem 1rem 4rem 1rem; align-items: flex-start; flex-wrap: wrap;">
+    <div style="display: flex; flex-direction: column; width: 350px;">
+        <img src="{poster}" style="border-radius: 16px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1);">
+        {cast_html}
     </div>
-    """, unsafe_allow_html=True)
+    <div style="flex: 1; min-width: 300px; padding-top: 1rem;">
+        <h1 style="font-size: 4rem; font-weight:800; margin-bottom: 0.5rem; line-height: 1.1; color: #FFFFFF; text-shadow: 0 4px 20px rgba(0,0,0,0.5);">{title}</h1>
+        <div style="color: #46d369; font-size: 1.2rem; font-weight:700; margin-bottom: 1rem;">{rating} Match <span style="color: #FFD700; margin-left: 1.5rem; font-size: 1.2rem;">★ {overall_rating} Rating</span></div>
+        <div style="margin-bottom: 1.5rem;">{" ".join([f'<span class="genre-tag" style="font-size:1rem;">{g}</span>' for g in genres])}</div>
+        <p style="font-size: 1.2rem; line-height: 1.6; color: #CBD5E1; margin-bottom: 2rem; max-width: 800px;">{overview}</p>
+        {reviews_html}
+    </div>
+</div>
+""", unsafe_allow_html=True)
     
     if trailer:
         st.markdown("<h2 style='max-width: 1200px; margin: 0 auto; text-align: center; padding: 0 1rem; margin-bottom: 1rem; font-weight: 800;'>Official Trailer</h2>", unsafe_allow_html=True)
