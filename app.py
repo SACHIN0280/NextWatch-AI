@@ -237,7 +237,7 @@ div[data-testid="stSelectbox"] > div {{
 div[data-testid="stSelectbox"] label {{ display: none !important; }}
 
 /* Buttons */
-div[data-testid="stButton"] button {
+div[data-testid="stButton"] button {{
     background: transparent !important;
     color: #FFFFFF !important;
     border: 1px solid rgba(255, 255, 255, 0.4) !important;
@@ -247,12 +247,12 @@ div[data-testid="stButton"] button {
     height: 40px !important;
     box-shadow: none !important;
     transition: all 0.3s ease !important;
-}
-div[data-testid="stButton"] button:hover {
+}}
+div[data-testid="stButton"] button:hover {{
     background: rgba(255, 255, 255, 0.1) !important;
     border-color: #FFFFFF !important;
     transform: translateY(-2px) !important;
-}
+}}
 
 /* Slider Wrapper */
 .slider-wrapper {{
