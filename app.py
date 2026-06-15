@@ -485,9 +485,9 @@ if "movie_id" in query_params:
     
     st.markdown(NAV_HTML, unsafe_allow_html=True)
     
-    b_col1, b_col2 = st.columns([2, 10])
-    with b_col1:
-        if st.button("❮ Back to Home", key="back_btn"):
+    b_col1, b_col2 = st.columns([10, 2])
+    with b_col2:
+        if st.button("Back to Home", key="back_btn"):
             del st.query_params["movie_id"]
             st.rerun()
         
