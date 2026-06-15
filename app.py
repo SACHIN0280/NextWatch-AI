@@ -101,9 +101,19 @@ def fetch_full_movie_details(movie_id):
                 trailer = f"https://www.youtube.com/watch?v={video['key']}"
                 break
                 
-        return title, poster, backdrop, rating, overview, genres, trailer
+        reviews_url = f"https://api.themoviedb.org/3/movie/{movie_id}/reviews?api_key={API_KEY}&language=en-US&page=1"
+        reviews_data = requests.get(reviews_url, timeout=10).json()
+        reviews = []
+        for r in reviews_data.get('results', [])[:3]:
+            reviews.append({
+                "author": r.get("author", "Anonymous"),
+                "content": r.get("content", ""),
+                "rating": r.get("author_details", {}).get("rating")
+            })
+                
+        return title, poster, backdrop, rating, overview, genres, trailer, reviews
     except Exception:
-        return 'Unknown', None, None, 'N/A', 'No description available.', [], None
+        return 'Unknown', None, None, 'N/A', 'No description available.', [], None, []
 
 # -------------------- RECOMMEND --------------------
 def recommend(movie):
@@ -472,7 +482,7 @@ st.markdown(custom_css, unsafe_allow_html=True)
 query_params = st.query_params
 if "movie_id" in query_params:
     movie_id = query_params["movie_id"]
-    title, poster, backdrop, rating, overview, genres, trailer = fetch_full_movie_details(movie_id)
+    title, poster, backdrop, rating, overview, genres, trailer, reviews = fetch_full_movie_details(movie_id)
     
     components.html(
         """<script>
@@ -497,6 +507,16 @@ if "movie_id" in query_params:
             st.rerun()
         
     bg_img = backdrop if backdrop else (poster if poster else "")
+    
+    reviews_html = ""
+    if reviews:
+        reviews_html += "<div style='margin-top: 2rem;'><h3 style='font-size: 1.5rem; font-weight:700; margin-bottom: 1rem; color:#FFFFFF;'>User Reviews</h3>"
+        for r in reviews:
+            content = r['content'][:250] + "..." if len(r['content']) > 250 else r['content']
+            rating_star = f" <span style='color: #FFD700; margin-left: 10px; font-size: 1rem;'>★ {r['rating']}/10</span>" if r['rating'] else ""
+            reviews_html += f"<div style='background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;'><div style='font-weight: 700; color: #FFFFFF; margin-bottom: 0.3rem;'>{r['author']}{rating_star}</div><div style='color: #CBD5E1; font-size: 0.95rem; line-height: 1.5;'>{content}</div></div>"
+        reviews_html += "</div>"
+
     st.markdown(f"""
     <div style="position: absolute; top:0; left:0; width:100%; height:70vh; background: url('{bg_img}') center/cover; opacity:0.15; z-index:-1; filter:blur(8px); mask-image: linear-gradient(to bottom, black 40%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);"></div>
     <div style="max-width: 1200px; margin: 0 auto; display: flex; gap: 4rem; padding: 2rem 1rem 4rem 1rem; align-items: flex-start; flex-wrap: wrap;">
@@ -506,6 +526,7 @@ if "movie_id" in query_params:
             <div style="color: #46d369; font-size: 1.2rem; font-weight:700; margin-bottom: 1rem;">{rating} Match</div>
             <div style="margin-bottom: 1.5rem;">{" ".join([f'<span class="genre-tag" style="font-size:1rem;">{g}</span>' for g in genres])}</div>
             <p style="font-size: 1.2rem; line-height: 1.6; color: #CBD5E1; margin-bottom: 2rem; max-width: 800px;">{overview}</p>
+            {{reviews_html}}
         </div>
     </div>
     """, unsafe_allow_html=True)
