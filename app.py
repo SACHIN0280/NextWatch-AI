@@ -79,26 +79,26 @@ def fetch_trending():
 
 def fetch_full_movie_details(movie_id):
     try:
-        url = f"https://api.themoviedb.org/3/movie/{{movie_id}}?api_key={{API_KEY}}&language=en-US"
+        url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key={API_KEY}&language=en-US"
         data = requests.get(url, timeout=10).json()
         poster_path = data.get('poster_path', '')
         backdrop_path = data.get('backdrop_path', '')
-        poster = f"https://image.tmdb.org/t/p/w500/{{poster_path}}" if poster_path else None
-        backdrop = f"https://image.tmdb.org/t/p/original/{{backdrop_path}}" if backdrop_path else None
+        poster = f"https://image.tmdb.org/t/p/w500/{poster_path}" if poster_path else None
+        backdrop = f"https://image.tmdb.org/t/p/original/{backdrop_path}" if backdrop_path else None
         
         r = data.get('vote_average', 0)
-        rating = f"{{int(float(r) * 10)}}%" if r else "N/A"
+        rating = f"{int(float(r) * 10)}%" if r else "N/A"
         
         overview = data.get('overview', 'No description available.')
         genres = [g['name'] for g in data.get('genres', [])]
         title = data.get('title', 'Unknown')
         
-        trailer_url = f"https://api.themoviedb.org/3/movie/{{movie_id}}/videos?api_key={{API_KEY}}&language=en-US"
+        trailer_url = f"https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key={API_KEY}&language=en-US"
         trailer_data = requests.get(trailer_url, timeout=10).json()
         trailer = None
         for video in trailer_data.get('results', []):
             if video['type'] == 'Trailer':
-                trailer = f"https://www.youtube.com/watch?v={{video['key']}}"
+                trailer = f"https://www.youtube.com/watch?v={video['key']}"
                 break
                 
         return title, poster, backdrop, rating, overview, genres, trailer
