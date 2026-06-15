@@ -186,8 +186,8 @@ div[data-testid="stHorizontalBlock"] {{
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 1.5rem;
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
     max-width: 800px;
     margin: 0 auto;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -200,6 +200,9 @@ div[data-testid="stSelectbox"] > div {{
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 8px !important;
     color: #FFFFFF !important;
+    min-height: 48px !important;
+    display: flex;
+    align-items: center;
 }}
 div[data-testid="stSelectbox"] label {{ display: none !important; }}
 
